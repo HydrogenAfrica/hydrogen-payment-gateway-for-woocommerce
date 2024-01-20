@@ -4,7 +4,8 @@ use Automattic\WooCommerce\Blocks\Payments\Integrations\AbstractPaymentMethodTyp
 use Automattic\WooCommerce\StoreApi\Payments\PaymentContext;
 use Automattic\WooCommerce\StoreApi\Payments\PaymentResult;
 
-final class WC_Gateway_Hydrogen_Blocks_Support extends AbstractPaymentMethodType {
+final class WC_Gateway_Hydrogen_Blocks_Support extends AbstractPaymentMethodType
+{
 
 	/**
 	 * Payment method name/id/slug.
@@ -16,10 +17,11 @@ final class WC_Gateway_Hydrogen_Blocks_Support extends AbstractPaymentMethodType
 	/**
 	 * Initializes the payment method type.
 	 */
-	public function initialize() {
-		$this->settings = get_option( 'woocommerce_hydrogen_settings', array() );
+	public function initialize()
+	{
+		$this->settings = get_option('woocommerce_hydrogen_settings', array());
 
-		add_action( 'woocommerce_rest_checkout_process_payment_with_context', array( $this, 'failed_payment_notice' ), 8, 2 );
+		add_action('woocommerce_rest_checkout_process_payment_with_context', array($this, 'failed_payment_notice'), 8, 2);
 	}
 
 	/**
@@ -27,7 +29,8 @@ final class WC_Gateway_Hydrogen_Blocks_Support extends AbstractPaymentMethodType
 	 *
 	 * @return boolean
 	 */
-	public function is_active() {
+	public function is_active()
+	{
 		$payment_gateways_class = WC()->payment_gateways();
 		$payment_gateways       = $payment_gateways_class->payment_gateways();
 		return $payment_gateways['hydrogen']->is_available();
@@ -38,16 +41,17 @@ final class WC_Gateway_Hydrogen_Blocks_Support extends AbstractPaymentMethodType
 	 *
 	 * @return array
 	 */
-	public function get_payment_method_script_handles() {
-		$script_asset_path = plugins_url( '/assets/js/blocks/frontend/blocks.asset.php', WC_HYDROGEN_MAIN_FILE );
-		$script_asset      = file_exists( $script_asset_path )
+	public function get_payment_method_script_handles()
+	{
+		$script_asset_path = plugins_url('/assets/js/blocks/frontend/blocks.asset.php', WC_HYDROGEN_MAIN_FILE);
+		$script_asset      = file_exists($script_asset_path)
 			? require $script_asset_path
 			: array(
 				'dependencies' => array(),
 				'version'      => WC_HYDROGEN_VERSION,
 			);
 
-		$script_url = plugins_url( '/assets/js/blocks/frontend/blocks.js', WC_HYDROGEN_MAIN_FILE );
+		$script_url = plugins_url('/assets/js/blocks/frontend/blocks.js', WC_HYDROGEN_MAIN_FILE);
 
 		wp_register_script(
 			'wc-hydrogen-blocks',
@@ -57,11 +61,11 @@ final class WC_Gateway_Hydrogen_Blocks_Support extends AbstractPaymentMethodType
 			true
 		);
 
-		if ( function_exists( 'wp_set_script_translations' ) ) {
-			wp_set_script_translations( 'wc-hydrogen-blocks', 'woo-hydrogen', );
+		if (function_exists('wp_set_script_translations')) {
+			wp_set_script_translations('wc-hydrogen-blocks', 'woo-hydrogen',);
 		}
 
-		return array( 'wc-hydrogen-blocks' );
+		return array('wc-hydrogen-blocks');
 	}
 
 	/**
@@ -69,17 +73,18 @@ final class WC_Gateway_Hydrogen_Blocks_Support extends AbstractPaymentMethodType
 	 *
 	 * @return array
 	 */
-	public function get_payment_method_data() {
+	public function get_payment_method_data()
+	{
 		$payment_gateways_class = WC()->payment_gateways();
 		$payment_gateways       = $payment_gateways_class->payment_gateways();
 		$gateway                = $payment_gateways['hydrogen'];
 
 		return array(
-			'title'             => $this->get_setting( 'title' ),
-			'description'       => $this->get_setting( 'description' ),
-			'supports'          => array_filter( $gateway->supports, array( $gateway, 'supports' ) ),
+			'title'             => $this->get_setting('title'),
+			'description'       => $this->get_setting('description'),
+			'supports'          => array_filter($gateway->supports, array($gateway, 'supports')),
 			'allow_saved_cards' => $gateway->saved_cards && is_user_logged_in(),
-			'logo_url'          => array( $payment_gateways['hydrogen']->get_logo_url() ),
+			'logo_url'          => array($payment_gateways['hydrogen']->get_logo_url()),
 		);
 	}
 
@@ -89,14 +94,15 @@ final class WC_Gateway_Hydrogen_Blocks_Support extends AbstractPaymentMethodType
 	 * @param PaymentContext $context Holds context for the payment.
 	 * @param PaymentResult  $result  Result object for the payment.
 	 */
-	public function failed_payment_notice( PaymentContext $context, PaymentResult &$result ) {
-		if ( 'hydrogen' === $context->payment_method ) {
+	public function failed_payment_notice(PaymentContext $context, PaymentResult &$result)
+	{
+		if ('hydrogen' === $context->payment_method) {
 			add_action(
 				'wc_gateway_hydrogen_process_payment_error',
-				function( $failed_notice ) use ( &$result ) {
+				function ($failed_notice) use (&$result) {
 					$payment_details                 = $result->payment_details;
-					$payment_details['errorMessage'] = wp_strip_all_tags( $failed_notice );
-					$result->set_payment_details( $payment_details );
+					$payment_details['errorMessage'] = wp_strip_all_tags($failed_notice);
+					$result->set_payment_details($payment_details);
 				}
 			);
 		}

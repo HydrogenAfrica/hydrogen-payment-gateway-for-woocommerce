@@ -264,20 +264,14 @@ class WC_Gateway_Hydrogen extends WC_Payment_Gateway_CC
 		// Webhook listener/API hook.
 		add_action('woocommerce_api_tbz_wc_hydrogen_webhook', array($this, 'process_webhooks'));
 
+		add_action('woocommerce_api_hydrogen_wc_payment', array($this, 'hydrogen_wc_payment_popup_action'));
 
-		// Hook the hydrogen_wc_payment_action function to the WooCommerce API for your custom payment gateway/api hook
-		add_action('woocommerce_api_hydrogen_wc_payment', array($this, 'hydrogen_wc_payment_action'));
 
 		// Hydrogen Payment confirmation listener/API hook  .
 		add_action('woocommerce_api_wc_gateway_hydrogen', array($this, 'verify_hydrogen_wc_transaction'));
 
 		//Hydrogen Popup confirmation test
 		add_action('woocommerce_api_wc_gateway_hydrogen_popup', array($this, 'verify_hydrogen_wc_transaction_popup'));
-
-		// 		//Hydrogen Popup confirmation test
-		// add_action('woocommerce_api_wc_gateway_hydrogen_redirect_popup', array($this, 'verify_hydrogen_wc_redirect_popup'));
-
-
 
 		// Check if the gateway can be used.
 		if (!$this->is_valid_for_use()) {
@@ -321,121 +315,6 @@ class WC_Gateway_Hydrogen extends WC_Payment_Gateway_CC
 
 		return apply_filters('woocommerce_gateway_icon', $icon, $this->id);
 	}
-
-
-	/**
-	 * Hydrogen Payment action endpoint
-	 */
-
-	function hydrogen_wc_payment_action()
-	{
-
-		// error_log('My Custom Log Message: ' . print_r($_POST, true));
-
-		// Get your authentication token (You might need to retrieve your keys in the WooCommerce settings).
-
-		if ($this->testmode) {
-
-			$secret_key = $this->test_secret_key;
-
-			$url = 'https://qa-dev.hydrogenpay.com/qa/bepay/api/v1/merchant/initiate-payment';
-
-			// Your code for test mode
-		} else {
-
-			$secret_key = $this->live_secret_key;
-
-			$url = 'https://api.hydrogenpay.com/bepay/api/v1/merchant/initiate-payment';
-
-			// Your code for live mode
-		}
-
-		// $this->secret_key = $this->testmode ? $this->test_secret_key : $this->live_secret_key;
-
-
-		// $secret_key = $this->secret_key;
-		// $public_key = $this->public_key; 
-
-		// $secret_key = $this->live_secret_key;
-		// echo $secret_key;
-
-		// URL and headers for hydrogen 
-		// $url = 'https://qa-dev.hydrogenpay.com/qa/bepay/api/v1/merchant/initiate-payment';
-
-		// $url = 'https://api.hydrogenpay.com/bepay/api/v1/merchant/initiate-payment';
-
-		$headers = array(
-
-			// 'Authorization' => 'Bearer ' . $secret_key,
-
-			'Authorization' => $secret_key,
-
-			'Content-Type' => 'application/json',
-
-			'Cache-Control' => 'no-cache'
-		);
-
-
-		// error_log('Received POST data: ' . print_r($_POST, true));
-
-		// Check if the POST data contains the 'curlData' field
-
-		if (isset($_POST['hydrogen_pay'])) {
-
-			// Get the JSON data from the POST request and decode it
-			$post_data = json_decode(stripslashes($_POST['hydrogen_pay']), true);
-
-			// Prepare the request data
-			$request_data = array(
-
-				'body'    => json_encode($post_data),
-
-				'headers' => $headers,
-
-				'timeout' => 60,
-
-			);
-
-			// Make the POST request to the specified endpoint
-			$response = wp_remote_post($url, $request_data);
-
-			// Check if the request was successful
-			if (is_wp_error($response)) {
-
-				wp_send_json(array('result' => 'error', 'message' => $response->get_error_message()));
-			} else {
-
-				// Parse the response from the server and send it as a JSON response to the client
-				$response_code = wp_remote_retrieve_response_code($response);
-
-				$response_body = wp_remote_retrieve_body($response);
-
-				if ($response_code == 200) {
-
-					// The request was successful
-					$response_data = json_decode($response_body);
-
-					if ($response_data) {
-
-						wp_send_json($response_data);
-					} else {
-
-						wp_send_json(array('result' => 'error', 'message' => 'Request failed with an invalid response.'));
-					}
-				} else {
-
-					// There was an error in the request
-					wp_send_json(array('result' => 'error', 'message' => 'Request failed with HTTP code ' . $response_code));
-				}
-			}
-		} else {
-
-			// Handle the case where 'curlData' is not provided in the POST data
-			wp_send_json(array('result' => 'error', 'message' => print_r($_POST['hydrogen_pay'], true)));
-		}
-	}
-
-
 
 
 	/**
@@ -571,24 +450,12 @@ class WC_Gateway_Hydrogen extends WC_Payment_Gateway_CC
 				'description' => __('Enter your Test Authentication Token here', 'woo-hydrogen'),
 				'default'     => '',
 			),
-			// 'test_public_key'                  => array(
-			// 	'title'       => __( 'Test Authentication Token', 'woo-hydrogen' ),
-			// 	'type'        => 'text',
-			// 	'description' => __( 'Enter your Test Plubic Live Authentication Token here.', 'woo-hydrogen' ),
-			// 	'default'     => '',
-			// ),
 			'live_secret_key'                  => array(
 				'title'       => __('Live Authentication Token', 'woo-hydrogen'),
 				'type'        => 'password',
 				'description' => __('Enter your Live Authentication here.', 'woo-hydrogen'),
 				'default'     => '',
 			),
-			// 'live_public_key'                  => array(
-			// 	'title'       => __( 'Live Authentication Token', 'woo-hydrogen' ),
-			// 	'type'        => 'text',
-			// 	'description' => __( 'Enter your Live Authentication Token here.', 'woo-hydrogen' ),
-			// 	'default'     => '',
-			// ),
 			'autocomplete_order'               => array(
 				'title'       => __('Autocomplete Order After Payment', 'woo-hydrogen'),
 				'label'       => __('Autocomplete Order', 'woo-hydrogen'),
@@ -739,16 +606,26 @@ class WC_Gateway_Hydrogen extends WC_Payment_Gateway_CC
 			return;
 		}
 
+		$script_src = $this->testmode ?
+			'https://hydrogenshared.blob.core.windows.net/paymentgateway/paymentGatewayInegration.js' :
+			'https://hydrogenshared.blob.core.windows.net/paymentgateway/HydrogenPGIntegration.js';
+
+		$secret_key = $this->testmode ? $this->test_secret_key : $this->live_secret_key;
+
 		$suffix = (defined('SCRIPT_DEBUG') && SCRIPT_DEBUG) ? '' : '.min';
 
 		wp_enqueue_script('jquery');
 
-		wp_enqueue_script('hydrogen', 'https://js.hydrogen.co/v2/inline.js', array('jquery'), WC_HYDROGEN_VERSION, false);
+		wp_enqueue_script('hydrogen', $script_src, array('jquery'), WC_HYDROGEN_VERSION, false);
+
+		// Add 'module' attribute to the script tag
+		wp_script_add_data('hydrogen', 'module', true);
 
 		wp_enqueue_script('wc_hydrogen', plugins_url('assets/js/hydrogen' . $suffix . '.js', WC_HYDROGEN_MAIN_FILE), array('jquery', 'hydrogen'), WC_HYDROGEN_VERSION, false);
 
 		$hydrogen_params = array(
-			'key' => $this->secret_key,
+			// 'key' => $this->secret_key,
+			'key' => $secret_key,
 		);
 
 		if (is_checkout_pay_page() && get_query_var('order-pay')) {
@@ -971,13 +848,6 @@ class WC_Gateway_Hydrogen extends WC_Payment_Gateway_CC
 			// Your code for live mode
 		}
 
-
-
-		// $secret_key = $this->secret_key; // Replace with your actual secret key
-
-		// Include the order ID as a query parameter in the callback URL for Hydrogen
-		// $callback_url = WC()->api_request_url('WC_Gateway_Hydrogen') . '?order_id=' . $order_id;
-
 		$callback_url = $order->get_checkout_payment_url(true);
 
 		$payment_channels = $this->get_gateway_payment_channels($order);
@@ -987,7 +857,6 @@ class WC_Gateway_Hydrogen extends WC_Payment_Gateway_CC
 			'email' => $order->get_billing_email(),
 			'currency' => $order->get_currency(),
 			'description' => 'Payment for items ordered with ID  ' . $order->get_id(),
-			// 'description' => "Testing Woo",
 			'meta' => $order->get_billing_first_name() . ' ' . $order->get_billing_last_name(),
 			'callback' => $callback_url,
 		);
@@ -1012,11 +881,6 @@ class WC_Gateway_Hydrogen extends WC_Payment_Gateway_CC
 
 		$order->update_meta_data('_hydrogen_txn_ref', $txnref);
 		$order->save();
-
-		// $hydrogen_url = 'https://qa-dev.hydrogenpay.com/qa/bepay/api/v1/merchant/initiate-payment';
-
-		// $hydrogen_url = 'https://api.hydrogenpay.com/bepay/api/v1/merchant/initiate-payment';
-
 
 		$headers = array(
 			'Authorization' => $secret_key,
@@ -1044,7 +908,6 @@ class WC_Gateway_Hydrogen extends WC_Payment_Gateway_CC
 			return array(
 				'result' => 'success',
 				'redirect' => $response_body->data->url,
-				// 'redirect' => $response_body,
 			);
 		} else {
 			wc_add_notice(__('Unable to process payment, please try again', 'woo-hydrogen'), 'error');
@@ -1149,10 +1012,6 @@ class WC_Gateway_Hydrogen extends WC_Payment_Gateway_CC
 				),
 			);
 
-			// Send a POST request to the specified endpoint
-
-			// $response = wp_remote_post('https://qa-api.hydrogenpay.com/bepayment/api/v1/Merchant/confirm-payment', $request_data);
-
 			$response = wp_remote_post($urlHp, $request_data);
 
 			if (is_wp_error($response)) {
@@ -1347,38 +1206,6 @@ class WC_Gateway_Hydrogen extends WC_Payment_Gateway_CC
 			exit;
 		}
 	}
-
-
-	//
-
-
-	// function verify_hydrogen_wc_redirect_popup()
-	// {
-
-	// 	$order = wc_get_order($order_id);
-
-	// 	$callback_url = $order->get_checkout_payment_url(true);
-
-	// 	$payment_channels = $this->get_gateway_payment_channels($order);
-	
-	// 	$hydrogen_params1 = array(
-	// 		'amount' => $amount,
-	// 		'email' => $order->get_billing_email(),
-	// 		'currency' => $order->get_currency(),
-	// 		'description' => 'Payment for items ordered with ID  ' . $order->get_id(),
-	// 		// 'description' => "Testing Woo",
-	// 		'meta' => $order->get_billing_first_name() . ' ' . $order->get_billing_last_name(),
-	// 		'callback' => $callback_url,
-	// 	);
-
-
-	// }
-
-
-
-
-	//
-
 
 	function verify_hydrogen_wc_transaction_popup()
 	{
@@ -1426,8 +1253,6 @@ class WC_Gateway_Hydrogen extends WC_Payment_Gateway_CC
 
 			// Send a POST request to the specified endpoint
 
-			// $response = wp_remote_post('https://qa-api.hydrogenpay.com/bepayment/api/v1/Merchant/confirm-payment', $request_data);
-
 			$response = wp_remote_post($urlHp, $request_data);
 
 			if (is_wp_error($response)) {
@@ -1547,7 +1372,6 @@ class WC_Gateway_Hydrogen extends WC_Payment_Gateway_CC
 									$order->update_status('completed', '');
 								}
 
-
 								//	
 								$notice      = sprintf(__('Thank you for shopping with us.%1$sYour payment transaction was successful.', 'woo-hydrogen'), '<br />', '<br />', '<br />');
 								$notice_type = 'notice';
@@ -1559,7 +1383,7 @@ class WC_Gateway_Hydrogen extends WC_Payment_Gateway_CC
 
 								wp_send_json(array('statusCode' => '90000', 'message' => 'Success message, order already paid for ' . $order->get_status()));
 
-								wc_add_notice($notice, $notice_type);
+								// wc_add_notice($notice, $notice_type);  // to-doLater
 
 								// Redirect to cart after successful payment
 
@@ -1623,7 +1447,7 @@ class WC_Gateway_Hydrogen extends WC_Payment_Gateway_CC
 		}
 	}
 
-	
+
 	/**
 	 * Save Customer Card Details.
 	 *
@@ -1829,87 +1653,6 @@ class WC_Gateway_Hydrogen extends WC_Payment_Gateway_CC
 	}
 
 	/**
-	 * Process a refund request from the Order details screen.
-	 *
-	 * @param int $order_id WC Order ID.
-	 * @param float|null $amount Refund Amount.
-	 * @param string $reason Refund Reason
-	 *
-	 * @return bool|WP_Error
-	 */
-	public function process_refund($order_id, $amount = null, $reason = '')
-	{
-
-		if (!($this->public_key && $this->secret_key)) {
-			return false;
-		}
-
-		$order = wc_get_order($order_id);
-
-		if (!$order) {
-			return false;
-		}
-
-		$order_currency = $order->get_currency();
-		$transaction_id = $order->get_transaction_id();
-
-		$hydrogen_response = $this->get_hydrogen_transaction($transaction_id);
-
-		if (false !== $hydrogen_response) {
-
-			if ('success' == $hydrogen_response->data->status) {
-
-				$merchant_note = sprintf(__('Refund for Order ID: #%1$s on %2$s', 'woo-hydrogen'), $order_id, get_site_url());
-
-				$body = array(
-					'transaction'   => $transaction_id,
-					'amount'        => $amount * 100,
-					'currency'      => $order_currency,
-					'customer_note' => $reason,
-					'merchant_note' => $merchant_note,
-				);
-
-				$headers = array(
-					'Authorization' => 'Bearer ' . $this->secret_key,
-				);
-
-				$args = array(
-					'headers' => $headers,
-					'timeout' => 60,
-					'body'    => $body,
-				);
-
-				$refund_url = 'https://api.hydrogen.co/refund';
-
-				$refund_request = wp_remote_post($refund_url, $args);
-
-				if (!is_wp_error($refund_request) && 200 === wp_remote_retrieve_response_code($refund_request)) {
-
-					$refund_response = json_decode(wp_remote_retrieve_body($refund_request));
-
-					if ($refund_response->status) {
-						$amount         = wc_price($amount, array('currency' => $order_currency));
-						$refund_id      = $refund_response->data->id;
-						$refund_message = sprintf(__('Refunded %1$s. Refund ID: %2$s. Reason: %3$s', 'woo-hydrogen'), $amount, $refund_id, $reason);
-						$order->add_order_note($refund_message);
-
-						return true;
-					}
-				} else {
-
-					$refund_response = json_decode(wp_remote_retrieve_body($refund_request));
-
-					if (isset($refund_response->message)) {
-						return new WP_Error('error', $refund_response->message);
-					} else {
-						return new WP_Error('error', __('Can&#39;t process refund at the moment. Try again later.', 'woo-hydrogen'));
-					}
-				}
-			}
-		}
-	}
-
-	/**
 	 * Checks if WC version is less than passed in version.
 	 *
 	 * @param string $version Version to check against.
@@ -1975,10 +1718,12 @@ class WC_Gateway_Hydrogen extends WC_Payment_Gateway_CC
 	 * @param $hydrogen_txn_ref
 	 * @return false|mixed
 	 */
+
+
 	private function get_hydrogen_transaction($hydrogen_txn_ref)
 	{
 
-		$hydrogen_url = 'https://api.hydrogen.co/transaction/verify/' . $hydrogen_txn_ref;
+		$hydrogen_url = 'https://api.hydrogenpay/transaction/verify/' . $hydrogen_txn_ref;
 
 		$headers = array(
 			'Authorization' => 'Bearer ' . $this->secret_key,
