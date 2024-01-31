@@ -6,8 +6,8 @@
  * Description: Hydrogen Woocommerce Payment Gateway helps you process payments using cards and account transfers for faster delivery of goods and services.
  * Version: 1.0.0
  * Author: Hydrogen
- * WC requires at least: 7.0
- * WC tested up to: 8.1
+ * WC requires at least: 3.0.0
+ * WC tested up to: 8.2.5
  * Text Domain: hydrogen-woocommerce
  */
 

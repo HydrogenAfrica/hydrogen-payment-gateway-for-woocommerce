@@ -292,6 +292,16 @@ jQuery(function ($) {
             modalContent.style.height = 'auto';
         }
 
+        function adjustModalHeightForMobile() {
+            const modalContent = document.getElementById('modal');
+            // Add specific styling for mobile view if needed
+            modalContent.style.height = "80%";
+            modalContent.style.zIndex = "9";
+            modalContent.style.marginTop = "40px";
+            modalContent.style.marginBottom = "40px";
+        }
+
+
         // function adjustModalHeightForMobile() {
         //     const modalContent = document.getElementById('modal');
         //     // Add specific styling for mobile view if needed
@@ -402,9 +412,14 @@ jQuery(function ($) {
                     // Remove the 'height' style property from the div
                     // adjustModalHeight();
 
+                    // Remove the 'height' style property from the div
                     if (window.innerWidth > 768) {
                         // Remove the 'height' style property from the div only for larger screens
                         adjustModalHeight();
+
+                    } else {
+
+                        adjustModalHeightForMobile()
 
                     }
 
