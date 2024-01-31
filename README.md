@@ -24,8 +24,8 @@ TODO: Guide users through getting your code up and running on their own system. 
         * Title - allows you to determine what your customers will see this payment option as on the checkout page.
         * Description - controls the message that appears under the payment fields on the checkout page. Here you can list the types of cards you accept.
         * Test Mode - Check to enable test mode. Test mode enables you to test payments before going live. If you ready to start receving real payment on your site, kindly uncheck this.
-        * Test Authentication Token - Enter your Test Authentication Token here. Get your API keys from your Hydrogen account under Settings > Developer/API
-        * Live Authentication Token - Enter your Live Authentication Token here. Get your API keys from your Hydrogen account under Settings > Developer/API
+        * Test Authentication Token - Enter your Test Authentication Token here. Get your Authorization token from your Hydrogen account under Settings > Developer/API
+        * Live Authentication Token - Enter your Live Authentication Token here. Get your Authorization token from your Hydrogen account under Settings > Developer/API
         * Payment Option - Popup shows the Hydrogen payment popup on the page while Redirect will redirect the customer to Hydrogen Payment Site to make payment.
         * Click on Save Changes for the changes you made to be effected.
 
