@@ -289,7 +289,9 @@ jQuery(function ($) {
         function adjustModalHeight() {
             const modalContent = document.getElementById('modal');
             // Remove the 'height' style property from the div by setting it to auto
-            modalContent.style.height = 'auto';
+            // modalContent.style.height = 'auto';
+            modalContent.style.height = '100%';
+            modalContent.style.width  = "31rem";
         }
 
         function adjustModalHeightForMobile() {
