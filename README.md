@@ -8,7 +8,7 @@ Hydrogen Woocommerce Payment Gateway helps you process payments using cards and 
 # Getting Started
 1.	Installation process
 
-    1.  Download the plugin zip file using the from the options on this page.
+    1.  Download the plugin zip file using the link https://github.com/HydrogenAfrica/woocommerce-hydrogen-payment-gateway-plugin/archive/refs/heads/main.zip
     2.  Login to your WordPress Admin. Click on "Plugins > Add New" from the left hand menu.
     3.  Click on the "Upload" option, then click "Choose File" to select the zip file from your computer. Once selected, press "OK" and press the "Install Now" button.
     4.  Activate the plugin.
