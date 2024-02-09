@@ -6,7 +6,6 @@ Develop Woocommerce plugins to seamlessly integrate Hydrogen’s Payment Gateway
 Hydrogen Woocommerce Payment Gateway helps you process payments using cards and account transfers for faster delivery of goods and services.
 
 # Getting Started
-TODO: Guide users through getting your code up and running on their own system. In this section you can talk about:
 1.	Installation process
 
     1.  Download the plugin zip file (https://dev.azure.com/HydrogenPay/Payment%20Gateway/_git/be_pg_wc_plugin)
