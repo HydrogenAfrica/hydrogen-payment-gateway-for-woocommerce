@@ -295,8 +295,8 @@ jQuery(function ($) {
 
             const modal = document.getElementById('myModal');
             if (modal) {
-                modal.style.paddingTop = '9%';
-                // modal.style.paddingBottom = '1%';
+                modal.style.paddingTop = '9.5%';
+                modal.style.paddingBottom = '0%';
             }
 
             // Adjust the width of the pgIframe
