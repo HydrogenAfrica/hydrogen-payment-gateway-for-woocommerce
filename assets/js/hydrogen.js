@@ -286,26 +286,6 @@ jQuery(function ($) {
             }
         }
 
-        // function adjustModalHeight() {
-        //     const modalContent = document.getElementById('modal');
-        //     if (modalContent) {
-        //         // Remove the 'height' style property from the div by setting it to auto
-        //         modalContent.style.height = '90%';
-        //     }
-
-        //     const modal = document.getElementById('myModal');
-        //     if (modal) {
-        //         modal.style.paddingTop = '9.5%';
-        //         modal.style.paddingBottom = '0%';
-        //     }
-
-        //     // Adjust the width of the pgIframe
-        //     const iframe = document.querySelector('.pgIframe');
-        //     if (iframe) {
-        //         iframe.style.width = '27rem';
-        //     }
-        // }
-
         function adjustModalHeight() {
             const modalContent = document.getElementById('modal');
             if (modalContent) {
@@ -337,13 +317,6 @@ jQuery(function ($) {
             modalContent.style.marginTop = "40px";
             modalContent.style.marginBottom = "40px";
         }
-
-
-        // function adjustModalHeightForMobile() {
-        //     const modalContent = document.getElementById('modal');
-        //     // Add specific styling for mobile view if needed
-        //     modalContent.style.height = 'auto';
-        // }
 
         var urlParams = new URLSearchParams(window.location.search);
 
