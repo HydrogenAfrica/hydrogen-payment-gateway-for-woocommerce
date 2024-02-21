@@ -286,17 +286,40 @@ jQuery(function ($) {
             }
         }
 
+        // function adjustModalHeight() {
+        //     const modalContent = document.getElementById('modal');
+        //     if (modalContent) {
+        //         // Remove the 'height' style property from the div by setting it to auto
+        //         modalContent.style.height = '90%';
+        //     }
+
+        //     const modal = document.getElementById('myModal');
+        //     if (modal) {
+        //         modal.style.paddingTop = '9.5%';
+        //         modal.style.paddingBottom = '0%';
+        //     }
+
+        //     // Adjust the width of the pgIframe
+        //     const iframe = document.querySelector('.pgIframe');
+        //     if (iframe) {
+        //         iframe.style.width = '27rem';
+        //     }
+        // }
+
         function adjustModalHeight() {
             const modalContent = document.getElementById('modal');
             if (modalContent) {
                 // Remove the 'height' style property from the div by setting it to auto
-                modalContent.style.height = '90%';
+                // modalContent.style.height = '90%';
+                modalContent.style.height = '95%';
             }
 
             const modal = document.getElementById('myModal');
             if (modal) {
-                modal.style.paddingTop = '9.5%';
+                // modal.style.paddingTop = '9.5%';
+                modal.style.paddingTop = '1%';
                 modal.style.paddingBottom = '0%';
+                modal.style.zIndex = '9999'; // Set z-index to 9999
             }
 
             // Adjust the width of the pgIframe
