@@ -265,7 +265,8 @@ jQuery(function ($) {
             description: "Payment for items ordered with ID " + wc_hydrogen_params.meta_order_id,
             meta: wc_hydrogen_params.meta_name,
             callback: callback_url,
-            isAPI: false
+            isAPI: false,
+            returnRef: 2
         };
 
         window.token = wc_hydrogen_params.key;
@@ -290,13 +291,11 @@ jQuery(function ($) {
             const modalContent = document.getElementById('modal');
             if (modalContent) {
                 // Remove the 'height' style property from the div by setting it to auto
-                // modalContent.style.height = '90%';
                 modalContent.style.height = '95%';
             }
 
             const modal = document.getElementById('myModal');
             if (modal) {
-                // modal.style.paddingTop = '9.5%';
                 modal.style.paddingTop = '1%';
                 modal.style.paddingBottom = '0%';
                 modal.style.zIndex = '9999'; // Set z-index to 9999
@@ -420,9 +419,6 @@ jQuery(function ($) {
                     transactionRef = hydrogen;
 
                     // Remove the 'height' style property from the div
-                    // adjustModalHeight();
-
-                    // Remove the 'height' style property from the div
                     if (window.innerWidth > 768) {
                         // Remove the 'height' style property from the div only for larger screens
                         adjustModalHeight();
@@ -446,9 +442,6 @@ jQuery(function ($) {
 
         // Get a reference to the close button in the modal
         var closeButton = document.querySelector('.modal .close');
-
-        // Get a reference to the "Close" button in the footer
-        //   var closeFooterButton = document.querySelector('.modal-footer button');
 
         // Function to hide the modal and overlay
         function hideModal() {

@@ -859,6 +859,7 @@ class WC_Gateway_Hydrogen extends WC_Payment_Gateway_CC
 			'description' => 'Payment for items ordered with ID  ' . $order->get_id(),
 			'meta' => $order->get_billing_first_name() . ' ' . $order->get_billing_last_name(),
 			'callback' => $callback_url,
+			'returnRef' => 2
 		);
 
 		if (!empty($payment_channels)) {
