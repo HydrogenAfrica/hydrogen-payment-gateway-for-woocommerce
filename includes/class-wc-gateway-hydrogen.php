@@ -421,7 +421,7 @@ class WC_Gateway_Hydrogen extends WC_Payment_Gateway_CC
 				'title'       => __('Description', 'hydrogen-wc'),
 				'type'        => 'textarea',
 				'description' => __('This controls the payment method description which the user sees during checkout.', 'hydrogen-wc'),
-				'default'     => __('Make payment via cards or account transfer', 'hydrogen-wc'),
+				'default'     => __('Powered by Hydrogen. Accepts Mastercard, Visa, Verve.', 'hydrogen-wc'),
 				'desc_tip'    => true,
 			),
 			'testmode'                         => array(
