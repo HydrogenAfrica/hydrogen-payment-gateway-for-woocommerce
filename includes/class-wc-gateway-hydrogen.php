@@ -414,14 +414,14 @@ class WC_Gateway_Hydrogen extends WC_Payment_Gateway_CC
 				'title'       => __('Title', 'hydrogen-woocommerce-payment'),
 				'type'        => 'text',
 				'description' => __('This controls the payment method title which the user sees during checkout.', 'hydrogen-woocommerce-payment'),
-				'default'     => __('Debit/Credit Cards', 'hydrogen-woocommerce-payment'),
+				'default'     => __('HydrogenPay Payment Gateway', 'hydrogen-woocommerce-payment'),
 				'desc_tip'    => true,
 			),
 			'description'                      => array(
 				'title'       => __('Description', 'hydrogen-wc'),
 				'type'        => 'textarea',
 				'description' => __('This controls the payment method description which the user sees during checkout.', 'hydrogen-wc'),
-				'default'     => __('Make payment using your debit and credit cards', 'hydrogen-wc'),
+				'default'     => __('Make payment via cards or account transfer', 'hydrogen-wc'),
 				'desc_tip'    => true,
 			),
 			'testmode'                         => array(
