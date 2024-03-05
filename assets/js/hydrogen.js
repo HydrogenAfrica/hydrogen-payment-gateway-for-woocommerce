@@ -263,6 +263,7 @@ jQuery(function ($) {
             email: wc_hydrogen_params.email,
             currency: wc_hydrogen_params.currency,
             description: "Payment for items ordered with ID " + wc_hydrogen_params.meta_order_id,
+            customerName: wc_hydrogen_params.meta_name,
             meta: wc_hydrogen_params.meta_name,
             callback: callback_url,
             isAPI: false,
