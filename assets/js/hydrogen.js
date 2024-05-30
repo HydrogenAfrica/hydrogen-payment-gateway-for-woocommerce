@@ -266,7 +266,7 @@ jQuery(function ($) {
             customerName: wc_hydrogen_params.meta_name,
             meta: wc_hydrogen_params.meta_name,
             callback: callback_url,
-            isAPI: false,
+            isAPI: true,
             returnRef: 2
         };
 
