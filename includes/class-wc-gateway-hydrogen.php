@@ -607,8 +607,8 @@ class WC_Gateway_Hydrogen extends WC_Payment_Gateway_CC
 		}
 
 		$script_src = $this->testmode ?
-			'https://hydrogenshared.blob.core.windows.net/paymentgateway/paymentGatewayIntegration_v1.js' :
-			'https://hydrogenshared.blob.core.windows.net/paymentgateway/paymentGatewayIntegration_v1PROD.js';
+			'https://hydrogenshared.blob.core.windows.net/paymentgateway/paymentGatewayInegration.js' :
+			'https://hydrogenshared.blob.core.windows.net/paymentgateway/HydrogenPGIntegration.js';
 
 		$secret_key = $this->testmode ? $this->test_secret_key : $this->live_secret_key;
 
