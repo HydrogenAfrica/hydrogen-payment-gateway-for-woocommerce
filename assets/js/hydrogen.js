@@ -1,554 +1,396 @@
 jQuery(function ($) {
+  // Function to generate metadata for the payment request
+  function generateMetadata() {
+    let metadata = [
+      {
+        display_name: "Plugin",
+        variable_name: "plugin",
+        value: "woo-hydrogen",
+      },
+    ];
 
-    let hydrogen_submit = false;
-
-    $("#wc-hydrogen-form").hide();
-    wcHydrogenFormHandler();
-
-    $("#hydrogen-payment-button").click(function () {
-        wcHydrogenFormHandler();
-        // location.reload(); // Refresh the page to reopen the modal
-    });
-
-    $("#hydrogen_form form#order_review").submit(function () {
-        wcHydrogenFormHandler();
-    });
-
-    function wcHydrogenCustomFields() {
-        let custom_fields = [
-            {
-                display_name: "Plugin",
-                variable_name: "plugin",
-                value: "woo-hydrogen"
-            }
-        ];
-
-        if (wc_hydrogen_params.meta_order_id) {
-            custom_fields.push({
-                display_name: "Order ID",
-                variable_name: "order_id",
-                value: wc_hydrogen_params.meta_order_id
-            });
-        }
-
-        if (wc_hydrogen_params.meta_name) {
-            custom_fields.push({
-                display_name: "Customer Name",
-                variable_name: "customer_name",
-                value: wc_hydrogen_params.meta_name
-            });
-        }
-
-        if (wc_hydrogen_params.meta_email) {
-            custom_fields.push({
-                display_name: "Customer Email",
-                variable_name: "customer_email",
-                value: wc_hydrogen_params.meta_email
-            });
-        }
-
-        if (wc_hydrogen_params.meta_phone) {
-            custom_fields.push({
-                display_name: "Customer Phone",
-                variable_name: "customer_phone",
-                value: wc_hydrogen_params.meta_phone
-            });
-        }
-
-        if (wc_hydrogen_params.meta_billing_address) {
-            custom_fields.push({
-                display_name: "Billing Address",
-                variable_name: "billing_address",
-                value: wc_hydrogen_params.meta_billing_address
-            });
-        }
-
-        if (wc_hydrogen_params.meta_shipping_address) {
-            custom_fields.push({
-                display_name: "Shipping Address",
-                variable_name: "shipping_address",
-                value: wc_hydrogen_params.meta_shipping_address
-            });
-        }
-
-        if (wc_hydrogen_params.meta_products) {
-            custom_fields.push({
-                display_name: "Products",
-                variable_name: "products",
-                value: wc_hydrogen_params.meta_products
-            });
-        }
-
-        return custom_fields;
+    // Add Order ID to metadata if available
+    if (wc_hydrogen_params.meta_order_id) {
+      metadata.push({
+        display_name: "Order ID",
+        variable_name: "order_id",
+        value: wc_hydrogen_params.meta_order_id,
+      });
     }
 
-    function wcHydrogenCustomFilters() {
-        let custom_filters = {};
-
-        if (wc_hydrogen_params.card_channel) {
-            if (wc_hydrogen_params.banks_allowed) {
-                custom_filters["banks"] = wc_hydrogen_params.banks_allowed;
-            }
-
-            if (wc_hydrogen_params.cards_allowed) {
-                custom_filters["card_brands"] = wc_hydrogen_params.cards_allowed;
-            }
-        }
-
-        return custom_filters;
+    // Add Customer Name to metadata if available
+    if (wc_hydrogen_params.meta_name) {
+      metadata.push({
+        display_name: "Customer Name",
+        variable_name: "customer_name",
+        value: wc_hydrogen_params.meta_name,
+      });
     }
 
-    function showSpinner() {
-        // Create the spinner HTML
-        let spinnerHTML = `
-            <style>
-                /* Style for the spinner overlay */
-                .spinner-overlay {
-                    position: fixed;
-                    top: 0;
-                    left: 0;
-                    width: 100%;
-                    height: 100%;
-                    background: rgba(255, 255, 255, 0.8); /* Semi-transparent white background */
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                    z-index: 9999; /* Ensure it's above other elements */
-                }
-    
-                /* Style for the spinner */
-                .spinner {
-                    border: 4px solid rgba(0, 0, 0, 0.1);
-                    border-top: 4px solid #3498db; /* Blue color for spinner */
-                    border-radius: 50%;
-                    width: 40px;
-                    height: 40px;
-                    animation: spin 1s linear infinite; /* Animation for rotation */
-                }
-    
-                @keyframes spin {
-                    0% { transform: rotate(0deg); }
-                    100% { transform: rotate(360deg); }
-                }
-            </style>
-            <div id="loading-spinner" class="spinner-overlay">
-                <div class="spinner"></div>
-            </div>
-        `;
-
-        // Append the spinner to the body
-        $('body').append(spinnerHTML);
+    // Add Customer Email to metadata if available
+    if (wc_hydrogen_params.meta_email) {
+      metadata.push({
+        display_name: "Customer Email",
+        variable_name: "customer_email",
+        value: wc_hydrogen_params.meta_email,
+      });
     }
 
-    function hideSpinner() {
-        // Hide the spinner by removing it from the DOM
-        $('#loading-spinner').remove();
+    // Add Customer Phone to metadata if available
+    if (wc_hydrogen_params.meta_phone) {
+      metadata.push({
+        display_name: "Customer Phone",
+        variable_name: "customer_phone",
+        value: wc_hydrogen_params.meta_phone,
+      });
     }
 
-    function hydrogenShowSuccessModal(message, newURL) {
-        // Create the modal HTML with CSS styling
+    // Add Billing Address to metadata if available
+    if (wc_hydrogen_params.meta_billing_address) {
+      metadata.push({
+        display_name: "Billing Address",
+        variable_name: "billing_address",
+        value: wc_hydrogen_params.meta_billing_address,
+      });
+    }
 
-        let hydrogenModalSuccessHTML = `
+    // Add Shipping Address to metadata if available
+    if (wc_hydrogen_params.meta_shipping_address) {
+      metadata.push({
+        display_name: "Shipping Address",
+        variable_name: "shipping_address",
+        value: wc_hydrogen_params.meta_shipping_address,
+      });
+    }
+
+    // Add Products to metadata if available
+    if (wc_hydrogen_params.meta_products) {
+      metadata.push({
+        display_name: "Products",
+        variable_name: "products",
+        value: wc_hydrogen_params.meta_products,
+      });
+    }
+
+    return metadata;
+  }
+
+  // Function to get payment filters
+  function getPaymentFilters() {
+    let filters = {};
+
+    // Add allowed banks and card brands if available
+    if (wc_hydrogen_params.card_channel) {
+      if (wc_hydrogen_params.banks_allowed) {
+        filters.banks = wc_hydrogen_params.banks_allowed;
+      }
+      if (wc_hydrogen_params.cards_allowed) {
+        filters.card_brands = wc_hydrogen_params.cards_allowed;
+      }
+    }
+
+    return filters;
+  }
+
+  // Function to display a modal with a message and redirect URL
+  function showModal(message, redirectUrl) {
+    let modalHTML = `
         <style>
-        /* Style the modal overlay to cover the entire screen */
-        .modal-overlay {
+          .modal-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+            background: rgba(0, 0, 0, 0.5);
             display: flex;
             justify-content: center;
             align-items: center;
-        }
-
-        /* Style the modal container */
-        .hydrogen-modal-container {
-            background: #fff; /* White background color */
+          }
+  
+          .hydrogen-modal-container {
+            background: #fff;
             border-radius: 20px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); /* Drop shadow */
-        position: fixed;
-          top: 50%;
-          left: 50%;
-          transform: translate(-50%, -50%);
-          max-width: 1000px!important;
-          z-index: 1001;
-        }
-
-        /* Style the modal content */
-        .modal-content {
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            max-width: 1000px !important;
+            z-index: 1001;
+          }
+  
+          .modal-content {
             padding: 20px;
-        }
+          }
         </style>
         <div class="modal-overlay">
-        <div class="hydrogen-modal-container">
+          <div class="hydrogen-modal-container">
             <div class="modal fade" id="customModalSuccess" tabindex="-1" aria-labelledby="customModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="hydrogen-modal-body">
-                            <p>${message}</p>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-primary" data-dismiss="modal" id="okButton">OK</button>
-                        </div>
-                    </div>
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="hydrogen-modal-body">
+                    <p>${message}</p>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal" id="okButton">OK</button>
+                  </div>
                 </div>
+              </div>
             </div>
+          </div>
         </div>
-        </div>
+      `;
+
+    $("body").append(modalHTML);
+    $("#okButton").on("click", function () {
+      window.location.href = redirectUrl;
+    });
+  }
+
+  // Function to get available payment channels
+  function getPaymentChannels() {
+    let channels = [];
+
+    if (wc_hydrogen_params.bank_channel) {
+      channels.push("bank");
+    }
+
+    if (wc_hydrogen_params.card_channel) {
+      channels.push("card");
+    }
+
+    if (wc_hydrogen_params.ussd_channel) {
+      channels.push("ussd");
+    }
+
+    if (wc_hydrogen_params.qr_channel) {
+      channels.push("qr");
+    }
+
+    if (wc_hydrogen_params.bank_transfer_channel) {
+      channels.push("bank_transfer");
+    }
+
+    return channels;
+  }
+
+  // Function to handle the payment process
+  async function handlePayment() {
+    $("#wc-hydrogen-form").hide();
+
+    $("form#payment-form, form#order_review")
+      .find("input.hydrogen_txnref")
+      .val("");
+
+    let amount = Number(wc_hydrogen_params.amount);
+    let currentUrl = window.location.href;
+
+    // Set up payment object
+    window.obj = {
+      amount: amount,
+      email: wc_hydrogen_params.email,
+      currency: wc_hydrogen_params.currency,
+      description:
+        "Payment for items ordered with ID " + wc_hydrogen_params.meta_order_id,
+      customerName: wc_hydrogen_params.meta_name,
+      meta: wc_hydrogen_params.meta_name,
+      callback: currentUrl,
+      isAPI: true,
+      returnRef: 2,
+    };
+
+    window.token = wc_hydrogen_params.key;
+
+    // Check if there are any available payment channels and filters
+    if (Array.isArray(getPaymentChannels()) && getPaymentChannels().length) {
+      paymentData.channels = getPaymentChannels();
+      if (!$.isEmptyObject(getPaymentFilters())) {
+        paymentData.metadata.custom_filters = getPaymentFilters();
+      }
+    }
+
+    let urlParams = new URLSearchParams(window.location.search);
+    let transactionRef = urlParams.get("TransactionRef");
+    let key = urlParams.get("key");
+
+    let newUrl = window.location.href;
+    let keyIndex = newUrl.indexOf("key=");
+    if (keyIndex !== -1) {
+      let keyString = newUrl.substring(keyIndex);
+      let queryIndex = keyString.indexOf("?");
+      if (queryIndex !== -1) {
+        keyString = keyString.substring(0, queryIndex);
+      }
+      keyString.split("=")[1];
+    }
+
+    // If transactionRef is not found, parse the URL to get it
+    if (!transactionRef) {
+      let urlString = window.location.href;
+      let questionMarkIndex = urlString.lastIndexOf("?");
+      if (questionMarkIndex !== -1) {
+        let params = urlString.substring(questionMarkIndex + 1).split("&");
+        for (let i = 0; i < params.length; i++) {
+          let param = params[i].split("=");
+          if (param[0] === "TransactionRef") {
+            transactionRef = param[1];
+            break;
+          }
+        }
+      }
+    }
+
+    // If transactionRef is found, handle the callback and confirm payment
+    if (transactionRef) {
+      if (window !== window.parent) {
+        callbackURL(transactionRef);
+      } else {
+        let orderId = wc_hydrogen_params.meta_order_id;
+        let redirectUrl = wc_hydrogen_params.hydrogen_wc_redirect_url;
+        let baseUrl = window.location.href.replace(
+          /\/checkout\/order-pay\/\d+\/.*/,
+          ""
+        );
+        baseUrl += "/cart/";
+        transactionRef = transactionRef;
+        confirmPayment(transactionRef);
+      }
+    } else {
+      // Fetch transaction reference if not found
+      async function fetchTransactionRef() {
+        try {
+          let response = await handlePgData(window.obj, window.token, onClose);
+          console.log("return transaction ref", response);
+          transactionRef = response;
+        } catch (error) {
+          console.error("Error occurred:", error);
+        }
+      }
+
+      fetchTransactionRef();
+    }
+
+    // Function to handle the callback URL
+    function callbackURL(transactionRef) {
+      closeModal(paymentResponseData, onClose);
+      var response = { event: "callback", transactionRef: transactionRef };
+      window.parent.postMessage(JSON.stringify(response), "*");
+    }
+
+    // Function to handle the close event
+    function onClose(transactionRef) {
+      var response = { event: "close", transactionRef: transactionRef };
+      window.parent.postMessage(JSON.stringify(response), "*");
+    }
+
+    // Function to confirm the payment
+    function confirmPayment(transactionRef) {
+      let spinnerHTML = `
+          <style>
+            .spinner-overlay {
+              position: fixed;
+              top: 0;
+              left: 0;
+              width: 100%;
+              height: 100%;
+              background: rgba(255, 255, 255, 0.8);
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              z-index: 9999;
+            }
+  
+            .spinner {
+              border: 4px solid rgba(0, 0, 0, 0.1);
+              border-top: 4px solid #3498db;
+              border-radius: 50%;
+              width: 40px;
+              height: 40px;
+              animation: spin 1s linear infinite;
+            }
+  
+            @keyframes spin {
+              0% { transform: rotate(0deg); }
+              100% { transform: rotate(360deg); }
+            }
+          </style>
+          <div id="loading-spinner" class="spinner-overlay">
+            <div class="spinner"></div>
+          </div>
         `;
 
-        // Append the modal HTML to the body
-        $('body').append(hydrogenModalSuccessHTML);
+      $("body").append(spinnerHTML);
+      $("#wc-hydrogen-form").show();
 
-        // Add an event listener for the "OK" button
-        $('#okButton').on('click', function () {
-            // Redirect to the new URL when the "OK" button is clicked
-            window.location.href = newURL;
-        });
+      let orderId = wc_hydrogen_params.meta_order_id;
+
+      $.ajax({
+        url: "/wc-api/wc_gateway_hydrogen_popup",
+        method: "POST",
+        data: {
+          transactionRef: JSON.stringify(transactionRef),
+          hydrogenOderId: orderId,
+        },
+        dataType: "json",
+        beforeSend: function () {},
+        success: function (response) {
+          let baseUrl = window.location.href.replace(
+            /\/checkout\/order-pay\/\d+\/.*/,
+            ""
+          );
+          baseUrl += "/cart/";
+
+          if (response.statusCode === "90000") {
+            let successMessage = `Your payment for order #${orderId} is successful and confirmed! Check your email or account for order details.`;
+            showModal(successMessage, baseUrl);
+          } else {
+            let failureMessage = `Your payment for order #${orderId} was declined with status: Failed! Click Ok.`;
+            showModal(failureMessage, baseUrl);
+          }
+        },
+        error: function (xhr, status, error) {
+          console.log("Error:", status, error);
+        },
+        complete: function () {
+          $("#loading-spinner").remove();
+        },
+      });
     }
 
-
-    function wcPaymentChannels() {
-        let payment_channels = [];
-
-        if (wc_hydrogen_params.bank_channel) {
-            payment_channels.push("bank");
+    // Event listener for messages from the parent window
+    window.addEventListener(
+      "message",
+      function (event) {
+        var messageResponse = JSON.parse(event.data);
+        switch (messageResponse.event) {
+          case "callback":
+            console.log("Callback successful:", messageResponse.transactionRef);
+            break;
+          case "close":
+            console.log(
+              "Payment Modal closed and execute payment confirmation:",
+              messageResponse.transactionRef
+            );
+            confirmPayment(messageResponse.transactionRef);
+            break;
+          default:
+            console.log("Unknown event:", messageResponse);
+            break;
         }
-
-        if (wc_hydrogen_params.card_channel) {
-            payment_channels.push("card");
-        }
-
-        if (wc_hydrogen_params.ussd_channel) {
-            payment_channels.push("ussd");
-        }
-
-        if (wc_hydrogen_params.qr_channel) {
-            payment_channels.push("qr");
-        }
-
-        if (wc_hydrogen_params.bank_transfer_channel) {
-            payment_channels.push("bank_transfer");
-        }
-
-        return payment_channels;
-    }
-
-    async function wcHydrogenFormHandler() {
-
-        $("#wc-hydrogen-form").hide();
-
-        let $form = $("form#payment-form, form#order_review");
-        let hydrogen_txnref = $form.find("input.hydrogen_txnref");
-        let subaccount_code = "";
-        let charges_account = "";
-        let transaction_charges = "";
-
-        hydrogen_txnref.val("");
-
-        let amount = Number(wc_hydrogen_params.amount);
-
-        // Success payment Modal
-
-        let orderRedirect = wc_hydrogen_params.meta_order_id;
-
-        let currentRedirectURL = window.location.href;
-
-        let callback_url = currentRedirectURL;
-
-        window.obj = {
-            amount: amount,
-            email: wc_hydrogen_params.email,
-            currency: wc_hydrogen_params.currency,
-            description: "Payment for items ordered with ID " + wc_hydrogen_params.meta_order_id,
-            customerName: wc_hydrogen_params.meta_name,
-            meta: wc_hydrogen_params.meta_name,
-            callback: callback_url,
-            isAPI: true,
-            returnRef: 2
-        };
-
-        window.token = wc_hydrogen_params.key;
-
-        function handlePaymentCallback() {
-            // Trigger the close button's click for the iframe
-            closeButton.click();
-
-            // Redirect to the cart page
-            window.location.href = '/cart'; // Adjust the URL as needed
-        }
-
-        if (Array.isArray(wcPaymentChannels()) && wcPaymentChannels().length) {
-            paymentData["channels"] = wcPaymentChannels();
-
-            if (!$.isEmptyObject(wcHydrogenCustomFilters())) {
-                paymentData["metadata"]["custom_filters"] = wcHydrogenCustomFilters();
-            }
-        }
-
-        function adjustModalHeight() {
-            const modalContent = document.getElementById('modal');
-            if (modalContent) {
-                // Remove the 'height' style property from the div by setting it to auto
-                modalContent.style.height = '95%';
-            }
-
-            const modal = document.getElementById('myModal');
-            if (modal) {
-                modal.style.paddingTop = '1%';
-                modal.style.paddingBottom = '0%';
-                modal.style.zIndex = '9999'; // Set z-index to 9999
-            }
-
-            // Adjust the width of the pgIframe
-            const iframe = document.querySelector('.pgIframe');
-            if (iframe) {
-                iframe.style.width = '27rem';
-            }
-        }
-
-        function adjustModalHeightForMobile() {
-            const modalContent = document.getElementById('modal');
-            // Add specific styling for mobile view if needed
-            modalContent.style.height = "80%";
-            modalContent.style.zIndex = "9";
-            modalContent.style.marginTop = "40px";
-            modalContent.style.marginBottom = "40px";
-        }
-
-        var urlParams = new URLSearchParams(window.location.search);
-
-        // Get the value of the "TransactionRef" parameter
-        var TransactionRef = urlParams.get('TransactionRef');
-
-        // Get the value of the "TransactionRef" parameter
-        var orderKey = urlParams.get('key');
-
-        // Get the current URL
-        var currentURL = window.location.href;
-
-        // Find the index of the "key=" parameter in the URL
-        var startIndex = currentURL.indexOf('key=');
-
-        if (startIndex !== -1) {
-            // Extract the portion of the URL starting from "key=" to the end
-            var keyParam = currentURL.substring(startIndex);
-
-            // Check if there's a second "?" in the keyParam (indicating additional parameters)
-            var secondQuestionMarkIndex = keyParam.indexOf('?');
-
-            if (secondQuestionMarkIndex !== -1) {
-                // If there's a second "?", remove everything from that point
-                keyParam = keyParam.substring(0, secondQuestionMarkIndex);
-            }
-
-            // Extract the value of the "key" parameter
-            var keyValue = keyParam.split('=')[1];
-
-        }
-
-        if (!TransactionRef) {
-
-            // If "TransactionRef" is not found, check for a second "?" in the URL
-            var fullUrl = window.location.href;
-            var index = fullUrl.lastIndexOf('?');
-
-            if (index !== -1) {
-                // Extract everything after the last "?" character
-                var paramsAfterLastQuestionMark = fullUrl.substring(index + 1);
-
-                // Split the remaining string by "&" to get individual parameters
-                var remainingParams = paramsAfterLastQuestionMark.split('&');
-
-                // Look for "TransactionRef" in the remaining parameters
-                for (var i = 0; i < remainingParams.length; i++) {
-                    var param = remainingParams[i].split('=');
-                    if (param[0] === 'TransactionRef') {
-                        TransactionRef = param[1];
-                        break;
-                    }
-                }
-            }
-        }
-
-        if (TransactionRef) {
-
-            if (window !== window.parent) {
-                //Additional logic specifically for TransactionRef within an iframe inlineJs
-
-                window.parent.postMessage({ TransactionRef: TransactionRef }, '*');
-
-            } else {
-                // Code execution if TransactionRef exists outside the iframe
-
-                var hydrogenOderId = wc_hydrogen_params.meta_order_id;
-
-                // console.log('TransactionRef found:', TransactionRef, hydrogenOderId);
-
-                // sendHydrogenPaymentConfirmationRequest(TransactionRef, hydrogenOderId);
-
-                var redirectionUrl = wc_hydrogen_params.hydrogen_wc_redirect_url;
-
-                // Remove "checkout/order-pay" from the URL
-                var newURL = window.location.href.replace(/\/checkout\/order-pay\/\d+\/.*/, '');
-
-                // Concatenate "my-account/orders/" to the URL
-                newURL += '/cart/';
-
-                // sendHydrogenPaymentConfirmationRequest(TransactionRef, hydrogenOderId);
-
-                // hideModal();
-
-                transactionRef = TransactionRef
-
-                hideModal()
-            }
-
-        } else {
-
-            // Refactor hydrogenPopup to not take obj and token as parameters
-            async function hydrogenPopup() {
-                try {
-
-                    // Access obj directly from the global scope (window)
-                    let hydrogen = await handlePgData(window.obj, window.token); // Use obj and token directly from the outer scope
-
-                    console.log("return transaction ref", hydrogen);
-
-                    transactionRef = hydrogen;
-
-                    // Remove the 'height' style property from the div
-                    if (window.innerWidth > 768) {
-                        // Remove the 'height' style property from the div only for larger screens
-                        adjustModalHeight();
-
-                    } else {
-
-                        adjustModalHeightForMobile()
-
-                    }
-
-                    // Handle success or further processing here
-                } catch (error) {
-                    console.error("Error occurred:", error);
-                    // Handle errors or failure cases here
-                }
-            }
-
-            hydrogenPopup();
-
-        }
-
-        // Get a reference to the close button in the modal
-        var closeButton = document.querySelector('.modal .close');
-
-        // Function to hide the modal and overlay
-        function hideModal() {
-
-            showSpinner();
-
-            $("#wc-hydrogen-form").show();
-
-            // Send ajax request for hydrogen payment confirmation endpoint
-
-            var hydrogenOderId = wc_hydrogen_params.meta_order_id;
-
-            // sendHydrogenPaymentConfirmationRequest(transactionRef, hydrogenOderId); Commented out for test
-
-            $.ajax({
-
-                url: '/wc-api/wc_gateway_hydrogen_popup', // calling the payment confirmation endpoint function
-
-                method: 'POST',
-
-                data: {
-                    transactionRef: JSON.stringify(transactionRef),
-
-                    hydrogenOderId: hydrogenOderId
-
-                }, // Set the data property as an object
-
-                dataType: 'json',
-
-                beforeSend: function () {
-
-                    // showSpinner();
-
-                    // console.log('Curldata before send:', currentURL); //for deburging
-                    // console.log('Curldata before send Oder Id:', hydrogenOderId); //for deburging
-
-                },
-
-                // success: handleHydrogenPaymentConfirmation,
-
-                success: function (response) {
-
-                    var hydrogenOderId = wc_hydrogen_params.meta_order_id;
-
-                    // Remove "checkout/order-pay" from the URL
-                    var newURL = window.location.href.replace(/\/checkout\/order-pay\/\d+\/.*/, '');
-
-                    newURL += '/cart/';
-
-                    // console.log(response);
-
-                    if (response.statusCode == "90000") {
-
-                        // console.log('Success Response Data: ', response);
-
-                        // Hydrogen Modal For Successful Payment
-
-                        var alertMessage = 'Your payment for order #' + hydrogenOderId + ' is successful and confirmed! Check your email or account for order details.';
-
-                        hydrogenShowSuccessModal(alertMessage, newURL);
-
-                    } else {
-
-                        var alertMessage = 'Your payment for order #' + hydrogenOderId + ' was declined with status: Failed ! Click Ok.';
-
-                        hydrogenShowSuccessModal(alertMessage, newURL);
-
-                    }
-
-                },
-
-                error: function (xhr, status, error) {
-
-                    console.log('Error:', status, error);
-
-                    // Hide the loading spinner for hydrogen conformation
-                    // $('#loading-spinner').hide();
-
-                },
-
-                complete: function () {
-                    // Hide spinner when the request is complete
-                    hideSpinner();
-                }
-
-            });
-
-        }
-
-        //******** Add a click event listener to the close button to hide the modal *********
-        closeButton.addEventListener('click', hideModal);
-
-        //Get a message and Close Iframe after successful payment status
-        window.addEventListener('message', function (event) {
-            // Check the origin of the message if required
-
-            // Check if the message contains TransactionRef
-            if (event.data && event.data.TransactionRef) {
-
-                // hideModal();
-                closeButton.click();
-
-            }
-        });
-
-    }
-
-
+      },
+      false
+    );
+  }
+
+  $("#wc-hydrogen-form").hide();
+  handlePayment();
+
+  $("#hydrogen-payment-button").click(function () {
+    handlePayment();
+  });
+
+  $("#hydrogen_form form#order_review").submit(function () {
+    handlePayment();
+  });
 });
