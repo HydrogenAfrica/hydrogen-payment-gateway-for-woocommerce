@@ -197,7 +197,7 @@ jQuery(function ($) {
       meta: wc_hydrogen_params.meta_name,
       callback: currentUrl,
       isAPI: true,
-      returnRef: 2,
+      returnRef: 0
     };
 
     window.token = wc_hydrogen_params.key;
@@ -273,7 +273,11 @@ jQuery(function ($) {
 
     // Function to handle the callback URL
     function callbackURL(transactionRef) {
-      closeModal(paymentResponseData, onClose);
+      const modalContainer = document.getElementById("hydrogenPay_myModal");
+      if (modalContainer) {
+        modalContainer.remove();
+        onClose(transactionRef);
+      }
       var response = { event: "callback", transactionRef: transactionRef };
       window.parent.postMessage(JSON.stringify(response), "*");
     }
