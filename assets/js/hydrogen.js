@@ -197,7 +197,7 @@ jQuery(function ($) {
       meta: wc_hydrogen_params.meta_name,
       callback: currentUrl,
       isAPI: true,
-      returnRef: 0,
+      returnRef: 0
     };
 
     window.token = wc_hydrogen_params.key;
@@ -207,6 +207,19 @@ jQuery(function ($) {
       paymentData.channels = getPaymentChannels();
       if (!$.isEmptyObject(getPaymentFilters())) {
         paymentData.metadata.custom_filters = getPaymentFilters();
+      }
+    }
+
+    function adjustModalHeight() {
+      const modalContent = document.getElementById("hydrogenPay_modal");
+      if (modalContent) {
+        modalContent.style.height = "682px";
+        modalContent.style.marginTop = "60px";
+      }
+
+      const modal = document.getElementById("hydrogenPay_myModal");
+      if (modal) {
+        modal.style.zIndex = "9999";
       }
     }
 
@@ -264,6 +277,12 @@ jQuery(function ($) {
           let response = await handlePgData(window.obj, window.token, onClose);
           console.log("return transaction ref", response);
           transactionRef = response;
+          if (window.innerWidth > 768) {
+            // Remove the 'height' style property from the div only for larger screens
+            adjustModalHeight();
+          } else {
+            adjustModalHeight();
+          }
         } catch (error) {
           console.error("Error occurred:", error);
         }
