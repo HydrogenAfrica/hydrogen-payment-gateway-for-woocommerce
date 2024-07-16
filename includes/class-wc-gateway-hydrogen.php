@@ -860,7 +860,7 @@ class WC_Gateway_Hydrogen extends WC_Payment_Gateway_CC
 			'customerName' => $order->get_billing_first_name() . ' ' . $order->get_billing_last_name(),
 			'meta' => $order->get_billing_first_name() . ' ' . $order->get_billing_last_name(),
 			'callback' => $callback_url,
-			'returnRef' => 2
+			'returnRef' => 0
 		);
 
 		if (!empty($payment_channels)) {
