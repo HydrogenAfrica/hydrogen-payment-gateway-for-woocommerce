@@ -197,7 +197,7 @@ jQuery(function ($) {
       meta: wc_hydrogen_params.meta_name,
       callback: currentUrl,
       isAPI: true,
-      returnRef: 0
+      returnRef: 0,
     };
 
     window.token = wc_hydrogen_params.key;
@@ -244,7 +244,8 @@ jQuery(function ($) {
     // If transactionRef is found, handle the callback and confirm payment
     if (transactionRef) {
       if (window !== window.parent) {
-        callbackURL(transactionRef);
+        var response = { event: "callback", transactionRef: transactionRef };
+        window.parent.postMessage(JSON.stringify(response), "*");
       } else {
         let orderId = wc_hydrogen_params.meta_order_id;
         let redirectUrl = wc_hydrogen_params.hydrogen_wc_redirect_url;
@@ -276,10 +277,8 @@ jQuery(function ($) {
       const modalContainer = document.getElementById("hydrogenPay_myModal");
       if (modalContainer) {
         modalContainer.remove();
-        onClose(transactionRef);
+        confirmPayment(transactionRef);
       }
-      var response = { event: "callback", transactionRef: transactionRef };
-      window.parent.postMessage(JSON.stringify(response), "*");
     }
 
     // Function to handle the close event
@@ -370,6 +369,7 @@ jQuery(function ($) {
         switch (messageResponse.event) {
           case "callback":
             console.log("Callback successful:", messageResponse.transactionRef);
+            callbackURL(messageResponse.transactionRef);
             break;
           case "close":
             console.log(
