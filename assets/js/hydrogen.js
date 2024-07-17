@@ -223,6 +223,19 @@ jQuery(function ($) {
       }
     }
 
+    function adjustModalHeightMobile() {
+      const modalContent = document.getElementById("hydrogenPay_modal");
+      if (modalContent) {
+        modalContent.style.height = "682px";
+        modalContent.style.marginTop = "40px";
+      }
+
+      const modal = document.getElementById("hydrogenPay_myModal");
+      if (modal) {
+        modal.style.zIndex = "9999";
+      }
+    }
+
     let urlParams = new URLSearchParams(window.location.search);
     let transactionRef = urlParams.get("TransactionRef");
     let key = urlParams.get("key");
@@ -281,7 +294,7 @@ jQuery(function ($) {
             // Remove the 'height' style property from the div only for larger screens
             adjustModalHeight();
           } else {
-            adjustModalHeight();
+            adjustModalHeightMobile();
           }
         } catch (error) {
           console.error("Error occurred:", error);
