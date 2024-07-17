@@ -184,7 +184,7 @@ jQuery(function ($) {
       .val("");
 
     let amount = Number(wc_hydrogen_params.amount);
-    let currentUrl = window.location.href;
+    let currentUrl = window.location.href.replace('/order-pay/', '/order-received/');
 
     // Set up payment object
     window.obj = {
@@ -276,7 +276,7 @@ jQuery(function ($) {
         let orderId = wc_hydrogen_params.meta_order_id;
         let redirectUrl = wc_hydrogen_params.hydrogen_wc_redirect_url;
         let baseUrl = window.location.href.replace(
-          /\/checkout\/order-pay\/\d+\/.*/,
+          /\/checkout\/order-received\/\d+\/.*/,
           ""
         );
         baseUrl += "/cart/";
@@ -371,7 +371,7 @@ jQuery(function ($) {
         beforeSend: function () {},
         success: function (response) {
           let baseUrl = window.location.href.replace(
-            /\/checkout\/order-pay\/\d+\/.*/,
+            /\/checkout\/order-received\/\d+\/.*/,
             ""
           );
           baseUrl += "/cart/";
