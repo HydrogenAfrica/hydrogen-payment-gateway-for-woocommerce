@@ -213,7 +213,7 @@ jQuery(function ($) {
     function adjustModalHeight() {
       const modalContent = document.getElementById("hydrogenPay_modal");
       if (modalContent) {
-        modalContent.style.height = "682px";
+        modalContent.style.height = "73.5%";
         modalContent.style.marginTop = "60px";
       }
 
@@ -226,7 +226,7 @@ jQuery(function ($) {
     function adjustModalHeightMobile() {
       const modalContent = document.getElementById("hydrogenPay_modal");
       if (modalContent) {
-        modalContent.style.height = "682px";
+        modalContent.style.height = "73.5%";
         modalContent.style.marginTop = "40px";
       }
 
