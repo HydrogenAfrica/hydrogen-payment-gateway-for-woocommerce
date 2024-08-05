@@ -197,7 +197,7 @@ jQuery(function ($) {
       meta: wc_hydrogen_params.meta_name,
       callback: currentUrl,
       isAPI: true,
-      returnRef: 0
+      returnRef: 2
     };
 
     window.token = wc_hydrogen_params.key;
@@ -213,8 +213,21 @@ jQuery(function ($) {
     function adjustModalHeight() {
       const modalContent = document.getElementById("hydrogenPay_modal");
       if (modalContent) {
-        modalContent.style.height = "682px";
+        modalContent.style.height = "73.5%";
         modalContent.style.marginTop = "60px";
+      }
+
+      const modal = document.getElementById("hydrogenPay_myModal");
+      if (modal) {
+        modal.style.zIndex = "9999";
+      }
+    }
+
+    function adjustModalHeightMobile() {
+      const modalContent = document.getElementById("hydrogenPay_modal");
+      if (modalContent) {
+        modalContent.style.height = "73.5%";
+        modalContent.style.marginTop = "40px";
       }
 
       const modal = document.getElementById("hydrogenPay_myModal");
@@ -281,7 +294,7 @@ jQuery(function ($) {
             // Remove the 'height' style property from the div only for larger screens
             adjustModalHeight();
           } else {
-            adjustModalHeight();
+            adjustModalHeightMobile();
           }
         } catch (error) {
           console.error("Error occurred:", error);
