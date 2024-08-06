@@ -213,8 +213,14 @@ jQuery(function ($) {
     function adjustModalHeight() {
       const modalContent = document.getElementById("hydrogenPay_modal");
       if (modalContent) {
-        modalContent.style.height = "73.5%";
-        modalContent.style.marginTop = "60px";
+        //modalContent.style.height = "73.5%";
+        modalContent.style.marginTop = "0px";
+      }
+
+      const modalClose = document.querySelector("#hydrogenPay_modal .close");
+      if (modalClose) {
+        //modalContent.style.height = "73.5%";
+        modalClose.style.color = "white";
       }
 
       const modal = document.getElementById("hydrogenPay_myModal");
@@ -226,8 +232,14 @@ jQuery(function ($) {
     function adjustModalHeightMobile() {
       const modalContent = document.getElementById("hydrogenPay_modal");
       if (modalContent) {
-        modalContent.style.height = "73.5%";
-        modalContent.style.marginTop = "40px";
+        //modalContent.style.height = "73.5%";
+        modalContent.style.marginTop = "-20px";
+      }
+
+      const modalClose = document.querySelector("#hydrogenPay_modal .close");
+      if (modalClose) {
+        //modalContent.style.height = "73.5%";
+        modalClose.style.color = "white";
       }
 
       const modal = document.getElementById("hydrogenPay_myModal");
