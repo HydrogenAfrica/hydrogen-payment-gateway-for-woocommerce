@@ -214,12 +214,11 @@ jQuery(function ($) {
       const modalContent = document.getElementById("hydrogenPay_modal");
       if (modalContent) {
         //modalContent.style.height = "73.5%";
-        modalContent.style.marginTop = "0px";
+        modalContent.style.marginTop = "-20px";
       }
 
       const modalClose = document.querySelector("#hydrogenPay_modal .close");
       if (modalClose) {
-        //modalContent.style.height = "73.5%";
         modalClose.style.color = "white";
       }
 
@@ -233,12 +232,11 @@ jQuery(function ($) {
       const modalContent = document.getElementById("hydrogenPay_modal");
       if (modalContent) {
         //modalContent.style.height = "73.5%";
-        modalContent.style.marginTop = "-20px";
+        modalContent.style.marginTop = "0px";
       }
 
       const modalClose = document.querySelector("#hydrogenPay_modal .close");
       if (modalClose) {
-        //modalContent.style.height = "73.5%";
         modalClose.style.color = "white";
       }
 
