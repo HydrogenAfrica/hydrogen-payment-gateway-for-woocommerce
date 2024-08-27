@@ -607,7 +607,7 @@ class WC_Gateway_Hydrogen extends WC_Payment_Gateway_CC
 		}
 
 		$script_src = $this->testmode ?
-			'https://hydrogenshared.blob.core.windows.net/paymentgateway/paymentGatewayIntegration_v1.js' :
+			'https://hydrogenshared.blob.core.windows.net/paymentgateway/paymentGatewayIntegration_v1PROD.js' :
 			'https://hydrogenshared.blob.core.windows.net/paymentgateway/paymentGatewayIntegration_v1PROD.js';
 
 		$secret_key = $this->testmode ? $this->test_secret_key : $this->live_secret_key;
@@ -836,7 +836,7 @@ class WC_Gateway_Hydrogen extends WC_Payment_Gateway_CC
 
 			$secret_key = $this->test_secret_key;
 
-			$hydrogen_url = 'https://qa-dev.hydrogenpay.com/qa/bepay/api/v1/merchant/initiate-payment';
+			$hydrogen_url = 'https://api.hydrogenpay.com/bepay/api/v1/merchant/initiate-payment';
 
 			// Your code for test mode
 		} else {
@@ -992,7 +992,7 @@ class WC_Gateway_Hydrogen extends WC_Payment_Gateway_CC
 
 				$secret_key = $this->test_secret_key;
 
-				$urlHp = 'https://qa-api.hydrogenpay.com/bepayment/api/v1/Merchant/confirm-payment';
+				$urlHp = 'https://api.hydrogenpay.com/bepay/api/v1/Merchant/confirm-payment';
 
 				// Your code for test mode
 			} else {
@@ -1231,7 +1231,7 @@ class WC_Gateway_Hydrogen extends WC_Payment_Gateway_CC
 
 				$secret_key = $this->test_secret_key;
 
-				$urlHp = 'https://qa-api.hydrogenpay.com/bepayment/api/v1/Merchant/confirm-payment';
+				$urlHp = 'https://api.hydrogenpay.com/bepay/api/v1/Merchant/confirm-payment';
 
 				// Your code for test mode
 			} else {
