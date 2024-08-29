@@ -445,15 +445,15 @@ class WC_Gateway_Hydrogen extends WC_Payment_Gateway_CC
 				),
 			),
 			'test_secret_key'                  => array(
-				'title'       => __('Test Authentication Token', 'woo-hydrogen'),
+				'title'       => __('Sandbox API Key', 'woo-hydrogen'),
 				'type'        => 'password',
-				'description' => __('Enter your Test Authentication Token here', 'woo-hydrogen'),
+				'description' => __('Enter your Sandbox API Key here', 'woo-hydrogen'),
 				'default'     => '',
 			),
 			'live_secret_key'                  => array(
-				'title'       => __('Live Authentication Token', 'woo-hydrogen'),
+				'title'       => __('Live API Key', 'woo-hydrogen'),
 				'type'        => 'password',
-				'description' => __('Enter your Live Authentication here.', 'woo-hydrogen'),
+				'description' => __('Enter your Live Api key here.', 'woo-hydrogen'),
 				'default'     => '',
 			),
 			'autocomplete_order'               => array(
