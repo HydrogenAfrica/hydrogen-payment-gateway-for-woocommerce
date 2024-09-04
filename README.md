@@ -23,7 +23,7 @@ Hydrogen Woocommerce Payment Gateway helps you process payments using cards and 
         * Title - allows you to determine what your customers will see this payment option as on the checkout page.
         * Description - controls the message that appears under the payment fields on the checkout page. Here you can list the types of cards you accept.
         * Test Mode - Check to enable test mode. Test mode enables you to test payments before going live. If you ready to start receving real payment on your site, kindly uncheck this.
-        * Sandbox - Enter your sandbox api key here. Get your Authorization token from your Hydrogen account under Settings > [Developer/API]([url](https://dashboard.hydrogenpay.com/merchant/profile/api-integration))
+        * Sandbox - Enter your sandbox API Keys here. Get your API Keys from your Hydrogen account under Settings > [Developer/API]([url](https://dashboard.hydrogenpay.com/merchant/profile/api-integration))
         * Live API Keys - Enter your Live API Keys here. Get your Authorization token from your Hydrogen account under Settings > [Developer/API]([url](https://dashboard.hydrogenpay.com/merchant/profile/api-integration))
         * Payment Option - Popup shows the Hydrogen payment popup on the page while Redirect will redirect the customer to Hydrogen Payment Site to make payment.
         * Click on Save Changes for the changes you made to be effected.
@@ -46,10 +46,10 @@ Hydrogen Woocommerce Payment Gateway helps you process payments using cards and 
     * https://docs.hydrogenpay.com/docs/authentication
 
 # Build and Test
-TODO: Describe and show how to build your code and run the tests. 
+Describe and show how to build your code and run the tests. 
 
 # Contribute
-TODO: Explain how other users and developers can contribute to make your code better. 
+Explain how other users and developers can contribute to make your code better. 
 
 If you discover a bug or have a solution to improve the Hydrogen Woocommerce Payment Gateway for Hydrogen Woo PG plugin,
 we welcome your contributions to enhance the code.
