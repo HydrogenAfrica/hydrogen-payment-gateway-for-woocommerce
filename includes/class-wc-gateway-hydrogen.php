@@ -182,6 +182,7 @@ class WC_Gateway_Hydrogen extends WC_Payment_Gateway_CC
 	{
 		$this->id                 = 'hydrogen';
 		$this->method_title       = __('Hydrogen Payment Gateway', 'woo-hydrogen');
+		// Translators: %1$s is the URL for signing up, %2$s is the URL for obtaining the authentication token.
 		$this->method_description = sprintf(__('Hydrogen Payment Gateway helps you process payments using cards and account transfers for faster delivery of goods and services.. <a href="%1$s" target="_blank">Sign up</a> for a Hydrogen account, and <a href="%2$s" target="_blank">get your authentication token</a>.', 'hydrogen-woocommerce'), 'https://dashboard.hydrogenpay.com/', 'https://dashboard.hydrogenpay.com/merchant/profile/api-integration');
 		$this->has_fields         = true;
 
@@ -286,7 +287,7 @@ class WC_Gateway_Hydrogen extends WC_Payment_Gateway_CC
 	{
 
 		if (!in_array(get_woocommerce_currency(), apply_filters('woocommerce_hydrogen_supported_currencies', array('NGN', 'USD', 'ZAR', 'GHS', 'KES', 'XOF', 'EGP')))) {
-
+			// Translators: %s is the URL to the WooCommerce general settings page.
 			$this->msg = sprintf(__('Hydrogen does not support your store currency. Kindly set it to either NGN (&#8358), GHS (&#x20b5;), USD (&#36;), KES (KSh), ZAR (R), XOF (CFA), or EGP (E£) <a href="%s">here</a>', 'woo-hydrogen'), admin_url('admin.php?page=wc-settings&tab=general'));
 
 			return false;
@@ -327,11 +328,22 @@ class WC_Gateway_Hydrogen extends WC_Payment_Gateway_CC
 			return;
 		}
 
-		// Check required fields.
+		// Check required fields & URL is properly escaped, preventing any potential security risks.
 		if (!($this->public_key || $this->secret_key)) {
-			echo '<div class="error"><p>' . sprintf(__('Please enter your Hydrogen merchant details <a href="%s">here</a> to be able to use the Hydrogen WooCommerce plugin.', 'woo-hydrogen'), admin_url('admin.php?page=wc-settings&tab=checkout&section=hydrogen')) . '</p></div>';
+			// Translators: %1$s is the HTML link to the WooCommerce settings page where users can enter their Hydrogen merchant details.
+			echo '<div class="error"><p>' . sprintf(
+				/* translators: %s: link to WooCommerce settings page */
+				__('Please enter your Hydrogen merchant details %s to be able to use the Hydrogen WooCommerce plugin.', 'woo-hydrogen'),
+				'<a href="' . esc_url(admin_url('admin.php?page=wc-settings&tab=checkout&section=hydrogen')) . '">' . esc_html__('here', 'woo-hydrogen') . '</a>'
+			) . '</p></div>';
 			return;
 		}
+
+		// if (!($this->public_key || $this->secret_key)) {
+		// 	// Translators: %s is the URL to enter Hydrogen merchant details.
+		// 	echo '<div class="error"><p>' . sprintf(__('Please enter your Hydrogen merchant details <a href="%s">here</a> to be able to use the Hydrogen WooCommerce plugin.', 'woo-hydrogen'), admin_url('admin.php?page=wc-settings&tab=checkout&section=hydrogen')) . '</p></div>';
+		// 	return;
+		// }
 	}
 
 	/**
@@ -366,16 +378,21 @@ class WC_Gateway_Hydrogen extends WC_Payment_Gateway_CC
 
 ?>
 
-		<h2><?php _e('Hydrogen Payment Gateway', 'woo-hydrogen'); ?>
+		<!-- <h2></?php _e('Hydrogen Payment Gateway', 'woo-hydrogen'); ?> -->
+		<!-- escaped to prevent potential security issues such as cross-site scripting (XSS) -->
+		<h2><?php esc_html_e('Hydrogen Payment Gateway', 'woo-hydrogen'); ?></h2>
 			<?php
 			if (function_exists('wc_back_link')) {
-				wc_back_link(__('Return to payments', 'woo-hydrogen'), admin_url('admin.php?page=wc-settings&tab=checkout'));
+				// Translators: 'Return to payments' is a link back to the WooCommerce payments settings.
+				// wc_back_link(__('Return to payments', 'woo-hydrogen'), admin_url('admin.php?page=wc-settings&tab=checkout'));
+				wc_back_link(esc_html__('Return to payments', 'woo-hydrogen'), esc_url(admin_url('admin.php?page=wc-settings&tab=checkout')));
 			}
 			?>
 		</h2>
 
 		<h4>
-			<strong><?php printf(__('Optional: To avoid situations where bad network makes it impossible to verify transactions, set your webhook URL <a href="%1$s" target="_blank" rel="noopener noreferrer">here</a> to the URL below<span style="color: red"><pre><code>%2$s</code></pre></span>', 'hydrogen-wc'), '#', WC()->api_request_url('hydrogen-wc_webhook')); ?></strong>
+			<!-- Translators: %1$s is the link to set the webhook URL, %2$s is the webhook URL itself. -->
+			<strong><?php printf(__('Optional: To avoid situations where bad network makes it impossible to verify transactions, set your webhook URL <a href="%1$s" target="_blank" rel="noopener noreferrer">here</a> to the URL below<span style="color: red"><pre><code>%2$s</code></pre></span>', 'hydrogen-wc'), esc_url('#'), esc_html(WC()->api_request_url('hydrogen-wc_webhook'))); ?></strong>
 		</h4>
 
 		<?php
@@ -388,7 +405,7 @@ class WC_Gateway_Hydrogen extends WC_Payment_Gateway_CC
 		} else {
 		?>
 			<div class="inline error">
-				<p><strong><?php _e('Hydrogen Payment Gateway Disabled', 'woo-hydrogen'); ?></strong>: <?php echo $this->msg; ?></p>
+				<p><strong><?php esc_html_e('Hydrogen Payment Gateway Disabled', 'woo-hydrogen'); ?></strong>: <?php echo esc_html($this->msg); ?></p>
 			</div>
 
 <?php
@@ -566,10 +583,10 @@ class WC_Gateway_Hydrogen extends WC_Payment_Gateway_CC
 	 * Payment form on checkout page
 	 */
 	public function payment_fields()
-	{
+	{		
 
 		if ($this->description) {
-			echo wpautop(wptexturize($this->description));
+			echo wp_kses_post(wpautop(wptexturize($this->description)));
 		}
 
 		if (!is_ssl()) {
@@ -955,12 +972,12 @@ class WC_Gateway_Hydrogen extends WC_Payment_Gateway_CC
 
 		echo '<div id="wc-hydrogen-form">';
 
-		echo '<p>' . __('Thank you for your order, please click the button below to pay with Hydrogen Payment Gateway.', 'hydrogen-wc') . '</p>';
+		echo '<p>' . esc_html__('Thank you for your order, please click the button below to pay with Hydrogen Payment Gateway.', 'hydrogen-wc') . '</p>';
 
-		echo '<div id="hydrogen_form"><form id="order_review" method="post" action="' . WC()->api_request_url('WC_Gateway_Hydrogen') . '"></form><button class="button" id="hydrogen-payment-button">' . __('Pay Now', 'woo-hydrogen') . '</button>';
+		echo '<div id="hydrogen_form"><form id="order_review" method="post" action="' . esc_url(WC()->api_request_url('WC_Gateway_Hydrogen')) . '"></form><button class="button" id="hydrogen-payment-button">' . esc_html__('Pay Now', 'woo-hydrogen') . '</button>';
 
 		if (!$this->remove_cancel_order_button) {
-			echo '  <a class="button cancel" id="hydrogen-cancel-payment-button" href="' . esc_url($order->get_cancel_order_url()) . '">' . __('Cancel order &amp; restore cart', 'woo-hydrogen') . '</a></div>';
+			echo '  <a class="button cancel" id="hydrogen-cancel-payment-button" href="' . esc_url($order->get_cancel_order_url()) . '">' . esc_html__('Cancel order &amp; restore cart', 'woo-hydrogen') . '</a></div>';
 		}
 
 		echo '</div>';
@@ -1075,7 +1092,7 @@ class WC_Gateway_Hydrogen extends WC_Payment_Gateway_CC
 							$order->update_status('on-hold', '');
 
 							$order->add_meta_data('_transaction_id', $hydrogen_transaction_ref, true);
-
+							// Translators: %1$s is a line break, %2$s is another line break, %3$s is a final line break. 
 							$notice      = sprintf(__('Thank you for shopping with us.%1$sYour payment transaction was successful, but the amount paid is not the same as the total order amount.%2$sYour order is currently on hold.%3$sKindly contact us for more information regarding your order and payment status.', 'woo-hydrogen'), '<br />', '<br />', '<br />');
 							$notice_type = 'notice';
 
@@ -1083,6 +1100,7 @@ class WC_Gateway_Hydrogen extends WC_Payment_Gateway_CC
 							$order->add_order_note($notice, 1);
 
 							// Add Admin Order Note
+							// Translators: %1$s is a line break, %2$s is a line break, %3$s is a line break, %4$s is the currency symbol, %5$s is the amount paid, %6$s is the currency symbol for total amount, %7$s is the total order amount, %8$s is a line break, %9$s is the Hydrogen transaction reference.
 							$admin_order_note = sprintf(__('<strong>Look into this order</strong>%1$sThis order is currently on hold.%2$sReason: Amount paid is less than the total order amount.%3$sAmount Paid was <strong>%4$s (%5$s)</strong> while the total order amount is <strong>%6$s (%7$s)</strong>%8$s<strong>Hydrogen Transaction Reference:</strong> %9$s', 'woo-hydrogen'), '<br />', '<br />', '<br />', $currency_symbol, $amount_paid, $currency_symbol, $order_total, '<br />', $hydrogen_transaction_ref);
 							$order->add_order_note($admin_order_note);
 
@@ -1102,7 +1120,7 @@ class WC_Gateway_Hydrogen extends WC_Payment_Gateway_CC
 								$order->update_status('on-hold', '');
 
 								$order->update_meta_data('_transaction_id', $hydrogen_transaction_ref);
-
+								// Translators: %1$s is a line break, %2$s is a line break, %3$s is a line break.	
 								$notice      = sprintf(__('Thank you for shopping with us.%1$sYour payment was successful, but the payment currency is different from the order currency.%2$sYour order is currently on-hold.%3$sKindly contact us for more information regarding your order and payment status.', 'woo-hydrogen'), '<br />', '<br />', '<br />');
 								$notice_type = 'notice';
 
@@ -1110,6 +1128,7 @@ class WC_Gateway_Hydrogen extends WC_Payment_Gateway_CC
 								$order->add_order_note($notice, 1);
 
 								// Add Admin Order Note
+								// Translators: %1$s is a line break, %2$s is a line break, %3$s is a line break, %4$s is the order currency, %5$s is the order currency symbol, %6$s is the payment currency, %7$s is the payment currency symbol, %8$s is a line break, %9$s is the Hydrogen transaction reference.
 								$admin_order_note = sprintf(__('<strong>Look into this order</strong>%1$sThis order is currently on hold.%2$sReason: Order currency is different from the payment currency.%3$sOrder Currency is <strong>%4$s (%5$s)</strong> while the payment currency is <strong>%6$s (%7$s)</strong>%8$s<strong>Hydrogen Transaction Reference:</strong> %9$s', 'woo-hydrogen'), '<br />', '<br />', '<br />', $order_currency, $currency_symbol, $payment_currency, $gateway_symbol, '<br />', $hydrogen_transaction_ref);
 								$order->add_order_note($admin_order_note);
 
@@ -1125,7 +1144,7 @@ class WC_Gateway_Hydrogen extends WC_Payment_Gateway_CC
 							} else {
 
 								$order->payment_complete($hydrogen_transaction_ref);
-
+								// Translators: %s is the Hydrogen transaction reference.
 								$order->add_order_note(sprintf(__('Payment via HYDROGEN GATEWAY Successful (Transaction Reference: %s)', 'woo-hydrogen'), $hydrogen_transaction_ref));
 
 								if ($this->is_autocomplete_order_enabled($order)) {
@@ -1134,7 +1153,7 @@ class WC_Gateway_Hydrogen extends WC_Payment_Gateway_CC
 								}
 
 
-								//	
+								// Translators: %1$s is a line break.
 								$notice      = sprintf(__('Thank you for shopping with us.%1$sYour payment transaction was successful.', 'woo-hydrogen'), '<br />', '<br />', '<br />');
 								$notice_type = 'notice';
 
@@ -1316,7 +1335,7 @@ class WC_Gateway_Hydrogen extends WC_Payment_Gateway_CC
 							$order->update_status('on-hold', '');
 
 							$order->add_meta_data('_transaction_id', $hydrogen_transaction_ref, true);
-
+							// Translators: %1$s is a line break, %2$s is another line break, %3$s is yet another line break.
 							$notice      = sprintf(__('Thank you for shopping with us.%1$sYour payment transaction was successful, but the amount paid is not the same as the total order amount.%2$sYour order is currently on hold.%3$sKindly contact us for more information regarding your order and payment status.', 'woo-hydrogen'), '<br />', '<br />', '<br />');
 							$notice_type = 'notice';
 
@@ -1324,6 +1343,7 @@ class WC_Gateway_Hydrogen extends WC_Payment_Gateway_CC
 							$order->add_order_note($notice, 1);
 
 							// Add Admin Order Note
+							// Translators: %1$s is a line break, %2$s is another line break, %3$s is another line break, %4$s is the currency symbol, %5$s is the amount paid, %6$s is the total order amount, %7$s is the currency symbol for the total order amount, %8$s is another line break, %9$s is the Hydrogen transaction reference.
 							$admin_order_note = sprintf(__('<strong>Look into this order</strong>%1$sThis order is currently on hold.%2$sReason: Amount paid is less than the total order amount.%3$sAmount Paid was <strong>%4$s (%5$s)</strong> while the total order amount is <strong>%6$s (%7$s)</strong>%8$s<strong>Hydrogen Transaction Reference:</strong> %9$s', 'woo-hydrogen'), '<br />', '<br />', '<br />', $currency_symbol, $amount_paid, $currency_symbol, $order_total, '<br />', $hydrogen_transaction_ref);
 							$order->add_order_note($admin_order_note);
 
@@ -1343,7 +1363,7 @@ class WC_Gateway_Hydrogen extends WC_Payment_Gateway_CC
 								$order->update_status('on-hold', '');
 
 								$order->update_meta_data('_transaction_id', $hydrogen_transaction_ref);
-
+								// Translators: %1$s is a line break, %2$s is another line break, %3$s is another line break.			
 								$notice      = sprintf(__('Thank you for shopping with us.%1$sYour payment was successful, but the payment currency is different from the order currency.%2$sYour order is currently on-hold.%3$sKindly contact us for more information regarding your order and payment status.', 'woo-hydrogen'), '<br />', '<br />', '<br />');
 								$notice_type = 'notice';
 
@@ -1351,6 +1371,7 @@ class WC_Gateway_Hydrogen extends WC_Payment_Gateway_CC
 								$order->add_order_note($notice, 1);
 
 								// Add Admin Order Note
+								// Translators: %1$s, %2$s, %3$s, and %8$s are line breaks. %4$s is the order currency symbol, %5$s is the order currency, %6$s is the payment currency symbol, %7$s is the payment currency, and %9$s is the Hydrogen transaction reference
 								$admin_order_note = sprintf(__('<strong>Look into this order</strong>%1$sThis order is currently on hold.%2$sReason: Order currency is different from the payment currency.%3$sOrder Currency is <strong>%4$s (%5$s)</strong> while the payment currency is <strong>%6$s (%7$s)</strong>%8$s<strong>Hydrogen Transaction Reference:</strong> %9$s', 'woo-hydrogen'), '<br />', '<br />', '<br />', $order_currency, $currency_symbol, $payment_currency, $gateway_symbol, '<br />', $hydrogen_transaction_ref);
 								$order->add_order_note($admin_order_note);
 
@@ -1366,7 +1387,7 @@ class WC_Gateway_Hydrogen extends WC_Payment_Gateway_CC
 							} else {
 
 								$order->payment_complete($hydrogen_transaction_ref);
-
+								// Translators: %s is the Hydrogen transaction reference.
 								$order->add_order_note(sprintf(__('Payment via HYDROGEN GATEWAY Successful (Transaction Reference: %s)', 'woo-hydrogen'), $hydrogen_transaction_ref));
 
 								if ($this->is_autocomplete_order_enabled($order)) {
@@ -1374,7 +1395,7 @@ class WC_Gateway_Hydrogen extends WC_Payment_Gateway_CC
 									$order->update_status('completed', '');
 								}
 
-								//	
+								// Translators: %1$s is a line break (<br />) used to format the message.
 								$notice      = sprintf(__('Thank you for shopping with us.%1$sYour payment transaction was successful.', 'woo-hydrogen'), '<br />', '<br />', '<br />');
 								$notice_type = 'notice';
 
