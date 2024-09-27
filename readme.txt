@@ -1,16 +1,17 @@
 == Hydrogen Payment Gateway for WooCommerce ==
-
 Contributors: Hydrogenpay
 Donate link: https://hydrogenpay.com
-Tags: hydrogen, hydrogenpay, woocommerce, payment gateway, hydrogen payment gateway, verve, mastercard, visa
+Tags: hydrogen, hydrogenpay, woocommerce, payment gateway, payments
 Requires at least: 3.0.0
 Tested up to: 8.2.5
 Stable tag: 1.0.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-== Introduction ==
+== Description ==
+Hydrogen Payment Gateway enables fast, secure payments through card transactions and account transfers, optimizing the delivery of goods and services.
 
+== Introduction ==
 This document outlines the scope of work for developing plugins that integrate the Hydrogen Payment Gateway API into a merchant’s website or product.
 
 The project involves creating WooCommerce plugins to enable seamless integration of Hydrogen’s Payment Gateway API, ensuring smooth payment processing within the merchant’s platform.
@@ -18,7 +19,6 @@ The project involves creating WooCommerce plugins to enable seamless integration
 Hydrogen Payment Gateway enables fast, secure payments through card transactions and account transfers, optimizing the delivery of goods and services.
 
 == Getting Started ==
-
 1.	Installation process
 
     1.  Download the plugin zip file using the link https://github.com/HydrogenAfrica/woocommerce-hydrogen-payment-gateway-plugin/archive/refs/heads/main.zip

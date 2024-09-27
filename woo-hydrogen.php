@@ -10,7 +10,7 @@
  * License URI: http://www.gnu.org/licenses/gpl-2.0.txt
  * WC requires at least: 3.0.0
  * WC tested up to: 8.2.5
- * Text Domain: hydrogen-payment-gateway-for-woo
+ * Text Domain: hydrogen-payment-gateway-for-woocommerce
  * Domain Path: /languages
  */
 
@@ -136,7 +136,7 @@ function tbz_wc_add_hydrogen_gateway($methods)
 function tbz_wc_hydrogen_wc_missing_notice()
 {
 	// Translators: %s is a link to install WooCommerce
-	echo '<div class="error"><p><strong>' . sprintf(__('Hydrogen payment Gateway wc requires WooCommerce to be installed and active. Click %s to install WooCommerce.', 'woo-hydrogen'), '<a href="' . admin_url('plugin-install.php?tab=plugin-information&plugin=woocommerce&TB_iframe=true&width=772&height=539') . '" class="thickbox open-plugin-details-modal">here</a>') . '</strong></p></div>';
+	echo '<div class="error"><p><strong>' . sprintf(__('Hydrogen payment Gateway wc requires WooCommerce to be installed and active. Click %s to install WooCommerce.', 'woo-hydrogen'), '<a href="' . esc_url(admin_url('plugin-install.php?tab=plugin-information&plugin=woocommerce&TB_iframe=true&width=772&height=539')) . '" class="thickbox open-plugin-details-modal">here</a>') . '</strong></p></div>';
 }
 
 /**

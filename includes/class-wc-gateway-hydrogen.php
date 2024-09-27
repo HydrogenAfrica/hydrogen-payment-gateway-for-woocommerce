@@ -259,14 +259,10 @@ class WC_Gateway_Hydrogen extends WC_Payment_Gateway_CC
 
 		add_action('woocommerce_receipt_' . $this->id, array($this, 'receipt_page'));
 
-		// Payment listener/API hook.
-		// add_action('woocommerce_api_wc_gateway_hydrogen', array($this, 'verify_hydrogen_transaction'));
-
 		// Webhook listener/API hook.
 		add_action('woocommerce_api_tbz_wc_hydrogen_webhook', array($this, 'process_webhooks'));
 
 		add_action('woocommerce_api_hydrogen_wc_payment', array($this, 'hydrogen_wc_payment_popup_action'));
-
 
 		// Hydrogen Payment confirmation listener/API hook  .
 		add_action('woocommerce_api_wc_gateway_hydrogen', array($this, 'verify_hydrogen_wc_transaction'));
@@ -339,11 +335,6 @@ class WC_Gateway_Hydrogen extends WC_Payment_Gateway_CC
 			return;
 		}
 
-		// if (!($this->public_key || $this->secret_key)) {
-		// 	// Translators: %s is the URL to enter Hydrogen merchant details.
-		// 	echo '<div class="error"><p>' . sprintf(__('Please enter your Hydrogen merchant details <a href="%s">here</a> to be able to use the Hydrogen WooCommerce plugin.', 'woo-hydrogen'), admin_url('admin.php?page=wc-settings&tab=checkout&section=hydrogen')) . '</p></div>';
-		// 	return;
-		// }
 	}
 
 	/**
@@ -378,21 +369,25 @@ class WC_Gateway_Hydrogen extends WC_Payment_Gateway_CC
 
 ?>
 
-		<!-- <h2></?php _e('Hydrogen Payment Gateway', 'woo-hydrogen'); ?> -->
-		<!-- escaped to prevent potential security issues such as cross-site scripting (XSS) -->
 		<h2><?php esc_html_e('Hydrogen Payment Gateway', 'woo-hydrogen'); ?></h2>
+		<h2>
 			<?php
 			if (function_exists('wc_back_link')) {
 				// Translators: 'Return to payments' is a link back to the WooCommerce payments settings.
-				// wc_back_link(__('Return to payments', 'woo-hydrogen'), admin_url('admin.php?page=wc-settings&tab=checkout'));
 				wc_back_link(esc_html__('Return to payments', 'woo-hydrogen'), esc_url(admin_url('admin.php?page=wc-settings&tab=checkout')));
 			}
 			?>
 		</h2>
 
 		<h4>
-			<!-- Translators: %1$s is the link to set the webhook URL, %2$s is the webhook URL itself. -->
-			<strong><?php printf(__('Optional: To avoid situations where bad network makes it impossible to verify transactions, set your webhook URL <a href="%1$s" target="_blank" rel="noopener noreferrer">here</a> to the URL below<span style="color: red"><pre><code>%2$s</code></pre></span>', 'hydrogen-wc'), esc_url('#'), esc_html(WC()->api_request_url('hydrogen-wc_webhook'))); ?></strong>
+			<?php
+			// Translators: %1$s is the link to set the webhook URL, %2$s is the webhook URL itself.
+			printf(
+				__('Optional: To avoid situations where bad network makes it impossible to verify transactions, set your webhook URL <a href="%1$s" target="_blank" rel="noopener noreferrer">here</a> to the URL below<span style="color: red"><pre><code>%2$s</code></pre></span>', 'hydrogen-wc'),
+				esc_url('#'),
+				esc_html(WC()->api_request_url('hydrogen-wc_webhook'))
+			);
+			?>
 		</h4>
 
 		<?php
@@ -583,7 +578,7 @@ class WC_Gateway_Hydrogen extends WC_Payment_Gateway_CC
 	 * Payment form on checkout page
 	 */
 	public function payment_fields()
-	{		
+	{
 
 		if ($this->description) {
 			echo wp_kses_post(wpautop(wptexturize($this->description)));
@@ -614,7 +609,8 @@ class WC_Gateway_Hydrogen extends WC_Payment_Gateway_CC
 			return;
 		}
 
-		$order_key = urldecode($_GET['key']);
+		// $order_key = urldecode($_GET['key']);
+		$order_key = sanitize_text_field(urldecode($_GET['key']));
 		$order_id  = absint(get_query_var('order-pay'));
 
 		$order = wc_get_order($order_id);
@@ -791,8 +787,7 @@ class WC_Gateway_Hydrogen extends WC_Payment_Gateway_CC
 		} elseif (isset($_POST['wc-' . $this->id . '-payment-token']) && 'new' !== $_POST['wc-' . $this->id . '-payment-token']) {
 
 			// Hydrogen Payment with token
-
-			$token_id = wc_clean($_POST['wc-' . $this->id . '-payment-token']);
+			$token_id = wc_clean(wp_unslash($_POST['wc-' . $this->id . '-payment-token']));
 
 			$token    = \WC_Payment_Tokens::get($token_id);
 
@@ -910,7 +905,8 @@ class WC_Gateway_Hydrogen extends WC_Payment_Gateway_CC
 		$args = array(
 			'headers' => $headers,
 			'timeout' => 60,
-			'body' => json_encode($hydrogen_params1),
+			// 'body' => json_encode($hydrogen_params1),
+			'body' => wp_json_encode($hydrogen_params1),
 		);
 
 		$request = wp_remote_post($hydrogen_url, $args);
@@ -992,9 +988,13 @@ class WC_Gateway_Hydrogen extends WC_Payment_Gateway_CC
 		// Ensure 'transactionRef' is set in the POST data
 		if (isset($_POST['transactionRef'])) {
 
-			$hydrogenTransactionRef = $_POST['transactionRef'];
+			// $hydrogenTransactionRef = $_POST['transactionRef'];
+			// Unsplash and sanitize transaction reference
+			$hydrogenTransactionRef = sanitize_text_field(wp_unslash($_POST['transactionRef']));
 
-			$hydrogenRansOderId = $_POST['hydrogenOderId'];
+			// $hydrogenRansOderId = $_POST['hydrogenOderId'];
+			// Check and sanitize hydrogen order ID if it exists
+			$hydrogenRansOderId = isset($_POST['hydrogenOderId']) ? sanitize_text_field(wp_unslash($_POST['hydrogenOderId'])) : '';
 
 			// Get the JSON data from the POST request and decode it
 			$hydrogenPostData = json_decode(stripslashes($hydrogenTransactionRef), true);
@@ -1023,7 +1023,7 @@ class WC_Gateway_Hydrogen extends WC_Payment_Gateway_CC
 
 			// Prepare the request data
 			$request_data = array(
-				'body'    => json_encode(array('transactionRef' => $hydrogenPostData)),
+				'body' => wp_json_encode(array('transactionRef' => $hydrogenPostData)),
 				'headers' => array(
 					'Authorization' => $secret_key,
 					'Content-Type'  => 'application/json',
@@ -1232,10 +1232,10 @@ class WC_Gateway_Hydrogen extends WC_Payment_Gateway_CC
 	{
 		// Ensure 'transactionRef' is set in the POST data
 		if (isset($_POST['transactionRef'])) {
-
-			$hydrogenTransactionRef = $_POST['transactionRef'];
-
-			$hydrogenRansOderId = $_POST['hydrogenOderId'];
+			// $hydrogenTransactionRef = $_POST['transactionRef'];
+			// Unsplash the input
+			$hydrogenTransactionRef = wp_unslash($_POST['transactionRef']);
+			$hydrogenRansOderId = wp_unslash($_POST['hydrogenOderId']);
 
 			// Get the JSON data from the POST request and decode it
 			$hydrogenPostData = json_decode(stripslashes($hydrogenTransactionRef), true);
@@ -1264,7 +1264,7 @@ class WC_Gateway_Hydrogen extends WC_Payment_Gateway_CC
 
 			// Prepare the request data
 			$request_data = array(
-				'body'    => json_encode(array('transactionRef' => $hydrogenPostData)),
+				'body' => wp_json_encode(array('transactionRef' => $hydrogenPostData)),
 				'headers' => array(
 					'Authorization' => $secret_key,
 					'Content-Type'  => 'application/json',
@@ -1712,7 +1712,7 @@ class WC_Gateway_Hydrogen extends WC_Payment_Gateway_CC
 	/**
 	 * Retrieve the payment channels configured for the gateway
 	 *
-	 * @since 5.7
+	 * @since 
 	 * @param WC_Order $order Order object.
 	 * @return array
 	 */
@@ -1737,7 +1737,7 @@ class WC_Gateway_Hydrogen extends WC_Payment_Gateway_CC
 	/**
 	 * Retrieve a transaction from Hydrogen.
 	 *
-	 * @since 5.7.5
+	 * @since 
 	 * @param $hydrogen_txn_ref
 	 * @return false|mixed
 	 */
