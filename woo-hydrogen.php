@@ -1,14 +1,17 @@
 <?php
 
 /**
- * Plugin Name: Hydrogen WooCommerce Payment Gateway
- * Plugin URI: 
- * Description: Hydrogen Woocommerce Payment Gateway helps you process payments using cards and account transfers for faster delivery of goods and services.
+ * Plugin Name: Hydrogen Payment Gateway for WooCommerce
+ * Plugin URI: https://hydrogenpay.com
+ * Description: Hydrogen Payment Gateway for WooCommerce helps you process payments using cards and account transfers for faster delivery of goods and services.
  * Version: 1.0.0
  * Author: Hydrogen
+ * License: GPL-2.0+
+ * License URI: http://www.gnu.org/licenses/gpl-2.0.txt
  * WC requires at least: 3.0.0
  * WC tested up to: 8.2.5
- * Text Domain: hydrogen-woocommerce
+ * Text Domain: hydrogen-payment-gateway-for-woocommerce
+ * Domain Path: /languages
  */
 
 use Automattic\WooCommerce\Admin\Notes\Note;
@@ -24,7 +27,7 @@ define('WC_HYDROGEN_URL', untrailingslashit(plugins_url('/', __FILE__)));
 define('WC_HYDROGEN_VERSION', '1.0.0');
 
 /**
- * Initialize Hydrogen WooCommerce payment gateway.
+ * Initialize Hydrogen payment gateway for wooCommerce.
  */
 function tbz_wc_hydrogen_init()
 {
@@ -68,9 +71,9 @@ function tbz_woo_hydrogen_plugin_action_links($links)
 }
 
 /**
- * Add Hydrogen Gateway to WooCommerce.
+ * Add Hydrogen Gateway for WooCommerce.
  *
- * @param array $methods WooCommerce payment gateways methods.
+ * @param array $methods for wooCommerce payment gateways methods.
  *
  * @return array
  */
