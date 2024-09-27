@@ -100,16 +100,16 @@ we welcome your contributions to enhance the code.
 
 ###
 
-![Screenshot 1](https://github.com/HydrogenAfrica/woocommerce-hydrogen-payment-gateway-plugin/blob/Staging/assets/images/screenshot-img1.png)
+![Screenshot 1](https://github.com/HydrogenAfrica/woocommerce-hydrogen-payment-gateway-plugin/blob/staging/assets/images/screenshot-img1.png)
 
 ### 2. Hydrogen Payment Gateway for WooCommer checkout page
 
 ###
 
-![Screenshot 2](https://github.com/HydrogenAfrica/woocommerce-hydrogen-payment-gateway-plugin/blob/Staging/assets/images/screenshot-img1.png)
+![Screenshot 2](https://github.com/HydrogenAfrica/woocommerce-hydrogen-payment-gateway-plugin/blob/staging/assets/images/screenshot-img2.png)
 
 ### 3. Hydrogen Popup/inline payment page
 
 ###
 
-![Screenshot 3](https://github.com/HydrogenAfrica/woocommerce-hydrogen-payment-gateway-plugin/blob/Staging/assets/images/screenshot-img1.png)
+![Screenshot 3](https://github.com/HydrogenAfrica/woocommerce-hydrogen-payment-gateway-plugin/blob/staging/assets/images/screenshot-img3.png)
