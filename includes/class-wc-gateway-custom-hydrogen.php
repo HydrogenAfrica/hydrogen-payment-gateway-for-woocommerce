@@ -230,7 +230,7 @@ class WC_Gateway_Custom_Hydrogen extends WC_Gateway_Hydrogen_Subscriptions
 			<?php
 
 			printf( // Translators: %s is the link to set the webhook URL
-				esc_html__('Important: To avoid situations where bad network makes it impossible to verify transactions, set your webhook URL <a href="%s" target="_blank" rel="noopener noreferrer">here</a> to the URL below', 'hydrogen-woocommerce'),
+				__('Important: To avoid situations where bad network makes it impossible to verify transactions, set your webhook URL <a href="%s" target="_blank" rel="noopener noreferrer">here</a> to the URL below', 'hydrogen-woocommerce'),
 				'#'
 			);
 			?>
@@ -245,7 +245,7 @@ class WC_Gateway_Custom_Hydrogen extends WC_Gateway_Hydrogen_Subscriptions
 			<?php
 
 			printf( // Translators: %s is the link to the Hydrogen settings page for configuring the authentication token and test mode
-				format: esc_html__('To configure your Hydrogen Authentication Token and enable/disable test mode, do that <a href="%s">here</a>', 'hydrogen-woocommerce'),
+				__('To configure your Hydrogen Authentication Token and enable/disable test mode, do that <a href="%s">here</a>', 'hydrogen-woocommerce'),
 				esc_url($hydrogen_settings_url)
 			);
 			?>
