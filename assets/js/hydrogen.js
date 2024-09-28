@@ -299,7 +299,6 @@ jQuery(function ($) {
         try {
           // Define and call handlePgData function to fetch the transaction reference
           let response = await handlePgData(window.obj, window.token, onClose);
-          console.log("Returned transaction ref:", response);
           let transactionRef = response;
 
           // Function to check payment status periodically
@@ -310,14 +309,13 @@ jQuery(function ($) {
                 transactionRef,
                 window.token
               );
-              console.log("Return checkPaymentStatus:", checkPaymentStatus);
+              // console.log("Return checkPaymentStatus:", checkPaymentStatus);
 
               // If the payment status is "Paid" or "Failed", post a message and clear the interval
               if (
                 checkPaymentStatus.status === "Paid" ||
                 checkPaymentStatus.status === "Failed"
               ) {
-                // let responseEvent = { event: "success", status: checkPaymentStatus.status };
                 let responseEvent = { event: "success", transactionRef: checkPaymentStatus.transactionRef};
                 window.parent.postMessage(JSON.stringify(responseEvent), "*");
                 // Clear the interval
@@ -504,20 +502,14 @@ jQuery(function ($) {
         var messageResponse = JSON.parse(event.data);
         switch (messageResponse.event) {
           case "callback":
-            console.log("Callback successful:", messageResponse.transactionRef);
             callbackURL(messageResponse.transactionRef);
             break;
 
           case "success":
-            console.log("Payment successful:", messageResponse.transactionRef);
             onSuccess(messageResponse.transactionRef);
             break;
 
           case "close":
-            console.log(
-              "Payment Modal closed and execute payment confirmation:",
-              messageResponse.transactionRef
-            );
             confirmPayment(messageResponse.transactionRef);
             break;
           default:
