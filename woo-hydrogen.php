@@ -136,9 +136,10 @@ function tbz_wc_add_hydrogen_gateway($methods)
 
 function tbz_wc_hydrogen_wc_missing_notice()
 {
-	// Translators: %s is a link to install WooCommerce
+	
 	echo '<div class="error"><p><strong>' . wp_kses(
 		sprintf(
+			// Translators: %s is a link to install WooCommerce
 			__('Hydrogen Payment Gateway requires WooCommerce to be installed and active. Click %s to install WooCommerce.', 'woo-hydrogen'),
 			'<a href="' . esc_url(admin_url('plugin-install.php?tab=plugin-information&plugin=woocommerce&TB_iframe=true&width=772&height=539')) . '" class="thickbox open-plugin-details-modal">' . esc_html__('here', 'woo-hydrogen') . '</a>'
 		),
@@ -151,12 +152,6 @@ function tbz_wc_hydrogen_wc_missing_notice()
 		]
 	) . '</strong></p></div>';
 }
-
-// function tbz_wc_hydrogen_wc_missing_notice()
-// {
-// 	// Translators: %s is a link to install WooCommerce
-// 	echo '<div class="error"><p><strong>' . sprintf(__('Hydrogen payment Gateway wc requires WooCommerce to be installed and active. Click %s to install WooCommerce.', 'woo-hydrogen'), '<a href="' . esc_url(admin_url('plugin-install.php?tab=plugin-information&plugin=woocommerce&TB_iframe=true&width=772&height=539')) . '" class="thickbox open-plugin-details-modal">here</a>') . '</strong></p></div>';
-// }
 
 /**
  * Display the test mode notice.

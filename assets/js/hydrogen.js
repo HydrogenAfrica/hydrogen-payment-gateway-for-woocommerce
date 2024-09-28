@@ -197,7 +197,7 @@ jQuery(function ($) {
       meta: wc_hydrogen_params.meta_name,
       callback: currentUrl,
       isAPI: true,
-      returnRef: 2
+      returnRef: 2,
     };
 
     window.token = wc_hydrogen_params.key;
@@ -297,17 +297,47 @@ jQuery(function ($) {
       // Fetch transaction reference if not found
       async function fetchTransactionRef() {
         try {
+          // Define and call handlePgData function to fetch the transaction reference
           let response = await handlePgData(window.obj, window.token, onClose);
-          console.log("return transaction ref", response);
-          transactionRef = response;
+          console.log("Returned transaction ref:", response);
+          let transactionRef = response;
+
+          // Function to check payment status periodically
+          let checkStatus = setInterval(async function () {
+            try {
+              // Check the payment status by calling the handlePaymentStatus function
+              const checkPaymentStatus = await handlePaymentStatus(
+                transactionRef,
+                window.token
+              );
+              console.log("Return checkPaymentStatus:", checkPaymentStatus);
+
+              // If the payment status is "Paid" or "Failed", post a message and clear the interval
+              if (
+                checkPaymentStatus.status === "Paid" ||
+                checkPaymentStatus.status === "Failed"
+              ) {
+                // let responseEvent = { event: "success", status: checkPaymentStatus.status };
+                let responseEvent = { event: "success", transactionRef: checkPaymentStatus.transactionRef};
+                window.parent.postMessage(JSON.stringify(responseEvent), "*");
+                // Clear the interval
+                clearInterval(checkStatus);
+              }
+            } catch (error) {
+              console.error("Error while checking payment status:", error);
+              clearInterval(checkStatus); // Stop the interval if an error occurs
+            }
+          }, 3000); // Poll every 3 seconds
+          // Adjust modal height based on the screen size
           if (window.innerWidth > 768) {
-            // Remove the 'height' style property from the div only for larger screens
+            // For larger screens
             adjustModalHeight();
           } else {
+            // For mobile screens
             adjustModalHeightMobile();
           }
         } catch (error) {
-          console.error("Error occurred:", error);
+          console.error("Error during payment processing:", error);
         }
       }
 
@@ -323,10 +353,74 @@ jQuery(function ($) {
       }
     }
 
+    // Function to handle onSuccess Payment
+    function onSuccess(transactionRef) {
+      const modalContainer = document.getElementById("hydrogenPay_myModal");
+      if (modalContainer) {
+        modalContainer.remove();
+        // onSuccessPaymentStatus(transactionRef);
+        confirmPayment(transactionRef); // Reconfirmed status before notification to users
+      }
+    }
+
     // Function to handle the close event
     function onClose(transactionRef) {
       var response = { event: "close", transactionRef: transactionRef };
       window.parent.postMessage(JSON.stringify(response), "*");
+    }
+
+    // Function to redirect after successful pauyment
+    function onSuccessPaymentStatus(transactionRef) {
+      let spinnerHTML = `
+      <style>
+        .spinner-overlay {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: rgba(255, 255, 255, 0.8);
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          z-index: 9999;
+        }
+
+        .spinner {
+          border: 4px solid rgba(0, 0, 0, 0.1);
+          border-top: 4px solid #3498db;
+          border-radius: 50%;
+          width: 40px;
+          height: 40px;
+          animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+      </style>
+      <div id="loading-spinner" class="spinner-overlay">
+        <div class="spinner"></div>
+      </div>
+    `;
+      // Append the spinner to the body
+      $("body").append(spinnerHTML);
+      $("#wc-hydrogen-form").show();
+      let orderId = wc_hydrogen_params.meta_order_id;
+      // Simulate successful payment directly (no AJAX)
+      setTimeout(function () {
+        // Remove the spinner after delay (e.g., 2 seconds)
+        $("#loading-spinner").remove();
+        let baseUrl = window.location.href.replace(
+          /\/checkout\/order-pay\/\d+\/.*/,
+          ""
+        );
+        baseUrl += "/cart/";
+        // Show a success message modal
+        let successMessage = `Your payment for order #${orderId} is successful and confirmed! Check your email or account for order details.`;
+        showModal(successMessage, baseUrl);
+      }, 2000);
     }
 
     // Function to confirm the payment
@@ -413,6 +507,12 @@ jQuery(function ($) {
             console.log("Callback successful:", messageResponse.transactionRef);
             callbackURL(messageResponse.transactionRef);
             break;
+
+          case "success":
+            console.log("Payment successful:", messageResponse.transactionRef);
+            onSuccess(messageResponse.transactionRef);
+            break;
+
           case "close":
             console.log(
               "Payment Modal closed and execute payment confirmation:",

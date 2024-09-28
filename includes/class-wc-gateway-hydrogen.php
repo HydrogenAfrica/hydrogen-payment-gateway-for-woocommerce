@@ -334,15 +334,6 @@ class WC_Gateway_Hydrogen extends WC_Payment_Gateway_CC
 			)) . '</p></div>';
 			return;
 		}
-		// if (!($this->public_key || $this->secret_key)) {
-		// 	// Translators: %1$s is the HTML link to the WooCommerce settings page where users can enter their Hydrogen merchant details.
-		// 	echo '<div class="error"><p>' . sprintf(
-		// 		// Translators: %s: link to WooCommerce settings page 
-		// 		__('Please enter your Hydrogen merchant details %s to be able to use the Hydrogen WooCommerce plugin.', 'woo-hydrogen'),
-		// 		'<a href="' . esc_url(admin_url('admin.php?page=wc-settings&tab=checkout&section=hydrogen')) . '">' . esc_html__('here', 'woo-hydrogen') . '</a>'
-		// 	) . '</p></div>';
-		// 	return;
-		// }
 	}
 
 	/**
@@ -390,27 +381,12 @@ class WC_Gateway_Hydrogen extends WC_Payment_Gateway_CC
 		<h4>
 
 			<?php
-			// Translators: %1$s is the link to set the webhook URL, %2$s is the webhook URL itself.
 			printf(
-				wp_kses(
-					//Translators: %1$s is the link to set the webhook URL, %2$s is the webhook URL itself
-					__('Optional: To avoid situations where bad network makes it impossible to verify transactions, set your webhook URL <a href="%1$s" target="_blank" rel="noopener noreferrer">here</a> to the URL below<span style="color: red"><pre><code>%2$s</code></pre></span>', 'hydrogen-wc'),
-					[
-						'a'    => ['href' => [], 'target' => [], 'rel' => []],
-						'span' => ['style' => []],
-						'pre'  => [],
-						'code' => [],
-					]
-				),
+				// Translators: %1$s is the link to set the webhook URL, %2$s is the webhook URL itself.
+				__('Optional: To avoid situations where bad network makes it impossible to verify transactions, set your webhook URL <a href="%1$s" target="_blank" rel="noopener noreferrer">here</a> to the URL below<span style="color: red"><pre><code>%2$s</code></pre></span>', 'hydrogen-wc'),
 				esc_url('#'),
 				esc_html(WC()->api_request_url('hydrogen-wc_webhook'))
 			);
-			// // Translators: %1$s is the link to set the webhook URL, %2$s is the webhook URL itself.
-			// printf(
-			// 	__('Optional: To avoid situations where bad network makes it impossible to verify transactions, set your webhook URL <a href="%1$s" target="_blank" rel="noopener noreferrer">here</a> to the URL below<span style="color: red"><pre><code>%2$s</code></pre></span>', 'hydrogen-wc'),
-			// 	esc_url('#'),
-			// 	esc_html(WC()->api_request_url('hydrogen-wc_webhook'))
-			// );
 			?>
 		</h4>
 
@@ -633,8 +609,6 @@ class WC_Gateway_Hydrogen extends WC_Payment_Gateway_CC
 			return;
 		}
 
-		// $order_key = urldecode($_GET['key']);
-		// $order_key = sanitize_text_field(urldecode($_GET['key']));
 		if (isset($_GET['key'])) {
 			$order_key = sanitize_text_field(urldecode($_GET['key']));
 		}
@@ -1015,12 +989,8 @@ class WC_Gateway_Hydrogen extends WC_Payment_Gateway_CC
 	{
 		// Ensure 'transactionRef' is set in the POST data
 		if (isset($_POST['transactionRef'])) {
-
-			// $hydrogenTransactionRef = $_POST['transactionRef'];
 			// Unsplash and sanitize transaction reference
 			$hydrogenTransactionRef = sanitize_text_field(wp_unslash($_POST['transactionRef']));
-
-			// $hydrogenRansOderId = $_POST['hydrogenOderId'];
 			// Check and sanitize hydrogen order ID if it exists
 			$hydrogenRansOderId = isset($_POST['hydrogenOderId']) ? sanitize_text_field(wp_unslash($_POST['hydrogenOderId'])) : '';
 
