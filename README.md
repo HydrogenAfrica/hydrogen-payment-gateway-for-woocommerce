@@ -112,4 +112,8 @@ we welcome your contributions to enhance the code.
 
 ###
 
+![Screenshot 3](https://github.com/HydrogenAfrica/woocommerce-hydrogen-payment-gateway-plugin/blob/staging/assets/images/screenshot-img4.png)
+
+###
+
 ![Screenshot 3](https://github.com/HydrogenAfrica/woocommerce-hydrogen-payment-gateway-plugin/blob/staging/assets/images/screenshot-img3.png)
