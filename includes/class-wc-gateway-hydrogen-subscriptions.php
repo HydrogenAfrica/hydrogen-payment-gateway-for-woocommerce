@@ -65,7 +65,7 @@ class WC_Gateway_Hydrogen_Subscriptions extends WC_Gateway_Hydrogen
 		$response = $this->process_subscription_payment($renewal_order, $amount_to_charge);
 
 		if (is_wp_error($response)) {
-
+			// Translators: %s is the error message returned by the payment gateway.
 			$renewal_order->update_status('failed', sprintf(__('Hydrogen Transaction Failed (%s)', 'woo-hydrogen'), $response->get_error_message()));
 		}
 	}

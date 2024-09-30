@@ -209,10 +209,15 @@ class WC_Gateway_Custom_Hydrogen extends WC_Gateway_Hydrogen_Subscriptions
 ?>
 
 		<h2>
+
 			<?php
-			/* translators: payment method title */
-			printf(__('Hydrogen - %s', 'woo-hydrogen'), esc_attr($this->title));
+			printf(
+				// Translators: %s payment method title 
+				wp_kses_post(__('Hydrogen - %s', 'woo-hydrogen')),
+				esc_html($this->title)
+			);
 			?>
+
 			<?php
 			if (function_exists('wc_back_link')) {
 				wc_back_link(__('Return to payments', 'woo-hydrogen'), $checkout_settings_url);
@@ -221,9 +226,13 @@ class WC_Gateway_Custom_Hydrogen extends WC_Gateway_Hydrogen_Subscriptions
 		</h2>
 
 		<h4>
+
 			<?php
-			/* translators: link to Hydrogen developers settings page */
-			printf(__('Important: To avoid situations where bad network makes it impossible to verify transactions, set your webhook URL <a href="%s" target="_blank" rel="noopener noreferrer">here</a> to the URL below', 'hydrogen-woocommerce'), '#');
+			printf(
+				// Translators: %s is the link to set the webhook URL
+				wp_kses_post(__('Important: To avoid situations where bad network makes it impossible to verify transactions, set your webhook URL <a href="%s" target="_blank" rel="noopener noreferrer">here</a> to the URL below', 'hydrogen-woocommerce')),
+				esc_url('#')
+			);
 			?>
 		</h4>
 
@@ -232,23 +241,33 @@ class WC_Gateway_Custom_Hydrogen extends WC_Gateway_Hydrogen_Subscriptions
 		</p>
 
 		<p>
-			<?php
-			/* translators: link to hydrogen general settings page */
-			printf(__('To configure your Hydrogen Authentication Token and enable/disable test mode, do that <a href="%s">here</a>', 'hydrogen-woocommerce'), esc_url($hydrogen_settings_url));
-			?>
-		</p>
 
+			<?php
+			printf(
+				// Translators: %s is the link to the Hydrogen settings page for configuring the authentication token and test mode
+				esc_html__('To configure your Hydrogen Authentication Token and enable/disable test mode, do that <a href="%s">here</a>', 'hydrogen-woocommerce'),
+				esc_url($hydrogen_settings_url)
+			);
+			?>
+
+		</p>
 <?php
 
 		if ($this->is_valid_for_use()) {
-
 			echo '<table class="form-table">';
 			$this->generate_settings_html();
 			echo '</table>';
 		} else {
 
-			/* translators: disabled message */
-			echo '<div class="inline error"><p><strong>' . sprintf(__('Hydrogen Payment Gateway Disabled: %s', 'hydrogen-woocommerce'), esc_attr($this->msg)) . '</strong></p></div>';
+			echo '<div class="inline error"><p><strong>' . wp_kses(
+				sprintf( // Translators: %s is the error message related to the Hydrogen Payment Gateway being disabled
+					__('Hydrogen Payment Gateway Disabled: %s', 'hydrogen-woocommerce'),
+					esc_attr($this->msg)
+				),
+				[
+					'strong' => [], // Allow <strong> tags
+				]
+			) . '</strong></p></div>';
 		}
 	}
 
@@ -399,7 +418,10 @@ class WC_Gateway_Custom_Hydrogen extends WC_Gateway_Hydrogen_Subscriptions
 			return;
 		}
 
-		$order_key = urldecode($_GET['key']);
+		if (isset($_GET['key'])) {
+			$order_key = urldecode(sanitize_text_field(wp_unslash($_GET['key'])));
+		}
+
 		$order_id  = absint(get_query_var('order-pay'));
 
 		$order = wc_get_order($order_id);

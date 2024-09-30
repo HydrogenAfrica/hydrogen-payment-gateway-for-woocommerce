@@ -1,0 +1,316 @@
+# Copyright (C) 2024 Hydrogen Developers
+# This file is distributed under the MIT License.
+msgid ""
+msgstr ""
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+"Project-Id-Version: Hydrogen Payment Gateway for WooCommerce\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/hydrogen-payment-gateway-for-woocommerce\n"
+"POT-Creation-Date: 2024-09-27 12:38+0100\n"
+"PO-Revision-Date: 2024-09-27 12:38+0100\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.8.12\n"
+"X-Domain: hydrogen-payment-gateway-for-woocommerce\n"
+"X-Poedit-Basepath: ..\n"
+"X-Poedit-WPHeader: woo-hydrogen.php\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+
+#: includes/class-wc-gateway-custom-hydrogen.php:17
+#: includes/class-wc-gateway-hydrogen.php:406
+msgid "Enable/Disable"
+msgstr ""
+
+#: includes/class-wc-gateway-custom-hydrogen.php:19
+#, php-format
+msgid "Enable hydrogen - %s"
+msgstr ""
+
+#: includes/class-wc-gateway-custom-hydrogen.php:21
+msgid "Enable this gateway as a payment option on the checkout page."
+msgstr ""
+
+#: includes/class-wc-gateway-custom-hydrogen.php:26
+#: includes/class-wc-gateway-hydrogen.php:370
+msgid "Title"
+msgstr ""
+
+#: includes/class-wc-gateway-custom-hydrogen.php:28
+#: includes/class-wc-gateway-hydrogen.php:371
+msgid ""
+"This controls the payment method title which the user sees during checkout."
+msgstr ""
+
+#: includes/class-wc-gateway-custom-hydrogen.php:31
+#: includes/class-wc-gateway-custom-hydrogen.php:350
+#: includes/class-wc-gateway-hydrogen.php:165
+#: includes/class-wc-gateway-hydrogen.php:325
+msgid "hydrogen"
+msgstr ""
+
+#: includes/class-wc-gateway-custom-hydrogen.php:34
+#: includes/class-wc-gateway-hydrogen.php:377
+msgid "Description"
+msgstr ""
+
+#: includes/class-wc-gateway-custom-hydrogen.php:33
+#: includes/class-wc-gateway-hydrogen.php:376
+msgid ""
+"This controls the payment method description which the user sees during "
+"checkout."
+msgstr ""
+
+#: includes/class-wc-gateway-custom-hydrogen.php:40
+#: includes/class-wc-gateway-hydrogen.php:391
+msgid "Payment Option"
+msgstr ""
+
+#: includes/class-wc-gateway-custom-hydrogen.php:42
+#: includes/class-wc-gateway-hydrogen.php:401
+msgid ""
+"Popup shows the payment popup on the page while Redirect will redirect the customer to Hydrogen to make payment."
+msgstr ""
+
+#: includes/class-wc-gateway-custom-hydrogen.php:47
+#: includes/class-wc-gateway-custom-hydrogen.php:89
+#: includes/class-wc-gateway-hydrogen.php:398
+#: includes/class-wc-gateway-hydrogen.php:462
+#: includes/class-wc-gateway-hydrogen.php:475
+msgid "Select One"
+msgstr ""
+
+#: includes/class-wc-gateway-custom-hydrogen.php:46
+#: includes/class-wc-gateway-hydrogen.php:443
+msgid "Inline"
+msgstr ""
+
+#: includes/class-wc-gateway-custom-hydrogen.php:48
+#: includes/class-wc-gateway-hydrogen.php:400
+msgid "redirect"
+msgstr ""
+
+
+#: includes/class-wc-gateway-custom-hydrogen.php:127
+#: includes/class-wc-gateway-hydrogen.php:489
+msgid "Custom Metadata"
+msgstr ""
+
+#: includes/class-wc-gateway-custom-hydrogen.php:144
+#: includes/class-wc-gateway-hydrogen.php:484
+msgid "Enable Custom Metadata"
+msgstr ""
+
+#: includes/class-wc-gateway-custom-hydrogen.php:131
+#: includes/class-wc-gateway-hydrogen.php:489
+msgid ""
+"If enabled, you will be able to send more information about the order to "
+"hydrogen."
+msgstr ""
+
+#: includes/class-wc-gateway-custom-hydrogen.php:152
+#: includes/class-wc-gateway-hydrogen.php:498
+msgid "Order ID"
+msgstr ""
+
+#: includes/class-wc-gateway-custom-hydrogen.php:136
+#: includes/class-wc-gateway-hydrogen.php:494
+msgid "Send Order ID"
+msgstr ""
+
+#: includes/class-wc-gateway-custom-hydrogen.php:140
+#: includes/class-wc-gateway-hydrogen.php:498
+msgid "If checked, the Order ID will be sent to hydrogen"
+msgstr ""
+
+#: includes/class-wc-gateway-custom-hydrogen.php:161
+#: includes/class-wc-gateway-hydrogen.php:507
+msgid "Customer Name"
+msgstr ""
+
+#: includes/class-wc-gateway-custom-hydrogen.php:158
+#: includes/class-wc-gateway-hydrogen.php:516
+msgid "If checked, the customer email address will be sent to hydrogen"
+msgstr ""
+
+#: includes/class-wc-gateway-custom-hydrogen.php:163
+#: includes/class-wc-gateway-hydrogen.php:521
+msgid "Customer Phone"
+msgstr ""
+
+#: includes/class-wc-gateway-custom-hydrogen.php:188
+#: includes/class-wc-gateway-hydrogen.php:534
+msgid "Order Billing Address"
+msgstr ""
+
+#: includes/class-wc-gateway-custom-hydrogen.php:172
+#: includes/class-wc-gateway-hydrogen.php:530
+msgid "Send Order Billing Address"
+msgstr ""
+
+#: includes/class-wc-gateway-custom-hydrogen.php:182
+#: includes/class-wc-gateway-hydrogen.php:540
+msgid "Send Order Shipping Address"
+msgstr ""
+
+#: includes/class-wc-gateway-custom-hydrogen.php:185
+#: includes/class-wc-gateway-hydrogen.php:543
+msgid "If checked, the order shipping address will be sent to hydrogen"
+msgstr ""
+
+#: includes/class-wc-gateway-hydrogen-subscriptions.php:44
+#, php-format
+msgid "This subscription has a free trial"
+msgstr ""
+
+#: includes/class-wc-gateway-hydrogen-subscriptions.php:142
+#: includes/class-wc-gateway-hydrogen.php:1129
+#, php-format
+msgid "Payment via HYDROGEN GATEWAY Successful  (Transaction Reference: %s)"
+msgstr ""
+
+#: includes/class-wc-gateway-hydrogen-subscriptions.php:69
+msgid "Hydrogen Transaction Failed"
+msgstr ""
+
+#: includes/class-wc-gateway-hydrogen.php:332
+#, php-format
+msgid ""
+"Please enter your hydrogen merchant details <a href=\"%s\">here</a> to be "
+"able to use the hydrogen WooCommerce plugin."
+msgstr ""
+
+#: includes/class-wc-gateway-hydrogen.php:378
+#, php-format
+msgid ""
+"Optional: To avoid situations where bad network makes it impossible to "
+"verify transactions, set your webhook URL <a href=\"%1$s\" target=\"_blank\" "
+"rel=\"noopener noreferrer\">here</a> to the URL below<span style=\"color: red"
+"\"><pre><code>%2$s</code></pre></span>"
+msgstr ""
+
+#: includes/class-wc-gateway-hydrogen.php:391
+msgid "hydrogen Payment Gateway Disabled"
+msgstr ""
+
+#: includes/class-wc-gateway-hydrogen.php:407
+msgid "Enable hydrogen"
+msgstr ""
+
+#: includes/class-wc-gateway-hydrogen.php:409
+msgid "Enable hydrogen as a payment option on the checkout page."
+msgstr ""
+
+#: includes/class-wc-gateway-hydrogen.php:424
+msgid "Powered by Hydrogen. Accepts Mastercard, Visa, Verve."
+msgstr ""
+
+#: includes/class-wc-gateway-hydrogen.php:428
+msgid "Test mode"
+msgstr ""
+
+#: includes/class-wc-gateway-hydrogen.php:431
+msgid "Test mode enables you to test payments before going live."
+msgstr ""
+
+#: includes/class-wc-gateway-hydrogen.php:438
+msgid "Popup shows the payment popup on the page while Redirect will redirect the customer to Hydrogen to make payment.
+msgstr ""
+
+#: includes/class-wc-gateway-hydrogen.php:450
+msgid ""
+"Enter your Sandbox API Key here <br />Once the "
+"Enter your Live Api key here."
+msgstr ""
+
+#: includes/class-wc-gateway-hydrogen.php:469
+msgid "Remove Cancel Order & Restore Cart Button"
+msgstr ""
+
+#: includes/class-wc-gateway-hydrogen.php:477
+msgid "Saved Cards"
+msgstr ""
+
+#: includes/class-wc-gateway-hydrogen.php:478
+msgid "Enable Payment via Saved Cards"
+msgstr ""
+
+#: includes/class-wc-gateway-hydrogen.php:480
+msgid ""
+"If enabled, users will be able to pay with a saved card during checkout."
+"Card details are saved on hydrogen servers, not on your store.<br>Note that "
+"you need to have a valid SSL certificate installed."
+msgstr ""
+
+#: includes/class-wc-gateway-hydrogen.php:1079
+#: includes/class-wc-gateway-hydrogen.php:1320
+#: includes/class-wc-gateway-hydrogen.php:1347
+#, php-format
+msgid ""
+"Thank you for shopping with us.%1$sYour payment transaction was successful, "
+"but the amount paid is not the same as the total order amount.%2$sYour order "
+"is currently on hold.%3$sKindly contact us for more information regarding "
+"your order and payment status."
+msgstr ""
+
+#: includes/class-wc-gateway-hydrogen.php:1086
+#: includes/class-wc-gateway-hydrogen.php:1354
+#, php-format
+msgid ""
+"<strong>Look into this order</strong>%1$sThis order is currently on hold."
+"%2$sReason: Amount paid is less than the total order amount.%3$sAmount Paid "
+"was <strong>%4$s (%5$s)</strong> while the total order amount is <strong>"
+"%6$s (%7$s)</strong>%8$s<strong>hydrogen Transaction Reference:</strong> %9$s"
+msgstr ""
+
+
+#: includes/class-wc-gateway-hydrogen.php:1421
+#: includes/class-wc-gateway-hydrogen.php:1423
+msgid "Payment was declined by hydrogen."
+msgstr ""
+
+#: includes/class-wc-gateway-hydrogen.php:1684
+msgid "autocomplete_order."
+msgstr ""
+
+#: includes/class-wc-gateway-hydrogen.php:1731
+msgid "Authorization"
+msgstr ""
+
+#: woo-hydrogen.php:68
+msgid "Settings"
+msgstr ""
+
+#: woo-hydrogen.php:139
+#, php-format
+msgid ""
+"hydrogen payment Gateway wc requires WooCommerce to be installed and active.  Click %s to "
+"install WooCommerce."
+msgstr ""
+
+#: woo-hydrogen.php:177
+#, php-format
+msgid ""
+"Hydrogen test mode is currently enabled. 
+msgstr ""
+
+#. Plugin Name of the plugin/theme
+msgid "Hydrogen Payment Gateway for WooCommerce"
+msgstr ""
+
+#. Plugin URI of the plugin/theme
+msgid "https://hydrogenpay.com"
+msgstr ""
+
+#. Description of the plugin/theme
+msgid "Hydrogen Payment Gateway for WooCommerce helps you process payments using cards and account transfers for faster delivery of goods and services."
+msgstr ""
+
+#. Author of the plugin/theme
+msgid "Hydrogen"
+msgstr ""
+
+#. Author URI of the plugin/theme
+msgid "https://hydrogenpay.com"
+msgstr ""
