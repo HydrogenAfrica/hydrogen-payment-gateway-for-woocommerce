@@ -610,8 +610,8 @@ class WC_Gateway_Hydrogen extends WC_Payment_Gateway_CC
 		}
 
 		if (isset($_GET['key'])) {
-			// $order_key = sanitize_text_field(urldecode($_GET['key']));
-			$order_key = sanitize_text_field(urldecode(wp_unslash($_GET['key'])));
+			$order_key = sanitize_text_field(urldecode($_GET['key']));
+			// $order_key = sanitize_text_field(urldecode(wp_unslash($_GET['key'])));
 		}
 
 		$order_id  = absint(get_query_var('order-pay'));
