@@ -9,7 +9,7 @@ License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 == Short Description ==
-Hydrogen Payment Gateway Plugin for WooCommerce.
+Fast, secure payments through card transactions and account transfers for WooCommerce.
 
 == Description ==
 Hydrogen Payment Gateway enables fast, secure payments through card transactions and account transfers, optimizing the delivery of goods and services.
