@@ -380,14 +380,16 @@ class WC_Gateway_Hydrogen extends WC_Payment_Gateway_CC
 
 		<h4>
 
+
 			<?php
 			printf(
 				// Translators: %1$s is the link to set the webhook URL, %2$s is the webhook URL itself.
-				__('Optional: To avoid situations where bad network makes it impossible to verify transactions, set your webhook URL <a href="%1$s" target="_blank" rel="noopener noreferrer">here</a> to the URL below<span style="color: red"><pre><code>%2$s</code></pre></span>', 'hydrogen-wc'),
+				wp_kses_post(__('Optional: To avoid situations where bad network makes it impossible to verify transactions, set your webhook URL <a href="%1$s" target="_blank" rel="noopener noreferrer">here</a> to the URL below<span style="color: red"><pre><code>%2$s</code></pre></span>', 'hydrogen-wc')),
 				esc_url('#'),
 				esc_html(WC()->api_request_url('hydrogen-wc_webhook'))
 			);
 			?>
+
 		</h4>
 
 		<?php
@@ -610,8 +612,14 @@ class WC_Gateway_Hydrogen extends WC_Payment_Gateway_CC
 		}
 
 		if (isset($_GET['key'])) {
-			// Input is unslashed, decoded, and sanitized in the correct order
-			$order_key = sanitize_text_field(urldecode(wp_unslash($_GET['key'])));
+			// Unslash the input
+			$unslashed_key = wp_unslash($_GET['key']);
+
+			// Decode the URL-encoded string
+			$decoded_key = urldecode($unslashed_key);
+
+			// Sanitize the input
+			$order_key = sanitize_text_field($decoded_key);
 		}
 
 		$order_id  = absint(get_query_var('order-pay'));
