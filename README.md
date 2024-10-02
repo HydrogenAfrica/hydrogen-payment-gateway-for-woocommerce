@@ -2,8 +2,6 @@
 
 Contributors: Hydrogenpay
 
-Tags: hydrogen, hydrogenpay, woocommerce, payment gateway, hydrogen payment gateway, verve, mastercard, visa
-
 Requires at least: 3.0.0
 
 Tested up to: 8.2.5
