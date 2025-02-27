@@ -195,7 +195,8 @@ jQuery(function ($) {
         "Payment for items ordered with ID " + wc_hydrogen_params.meta_order_id,
       customerName: wc_hydrogen_params.meta_name,
       meta: wc_hydrogen_params.meta_name,
-      callback: currentUrl,
+      callback:
+        currentUrl + "&nonce=" + encodeURIComponent(wc_hydrogen_params.nonce),
       isAPI: true,
       returnRef: 2,
     };
@@ -316,7 +317,10 @@ jQuery(function ($) {
                 checkPaymentStatus.status === "Paid" ||
                 checkPaymentStatus.status === "Failed"
               ) {
-                let responseEvent = { event: "success", transactionRef: checkPaymentStatus.transactionRef};
+                let responseEvent = {
+                  event: "success",
+                  transactionRef: checkPaymentStatus.transactionRef,
+                };
                 window.parent.postMessage(JSON.stringify(responseEvent), "*");
                 // Clear the interval
                 clearInterval(checkStatus);
@@ -461,6 +465,7 @@ jQuery(function ($) {
       $("#wc-hydrogen-form").show();
 
       let orderId = wc_hydrogen_params.meta_order_id;
+      let nonce = wc_hydrogen_params.nonce;
 
       $.ajax({
         url: "/wc-api/wc_gateway_hydrogen_popup",
@@ -468,9 +473,16 @@ jQuery(function ($) {
         data: {
           transactionRef: JSON.stringify(transactionRef),
           hydrogenOderId: orderId,
+          wc_hydrogen_payment_nonce: nonce,
         },
         dataType: "json",
+
         beforeSend: function () {},
+
+        // beforeSend: function (jqXHR, settings) {
+        // console.log("Request Payload:", settings.data); // Logs payload to console
+        //   },
+
         success: function (response) {
           let baseUrl = window.location.href.replace(
             /\/checkout\/order-pay\/\d+\/.*/,
@@ -482,6 +494,7 @@ jQuery(function ($) {
             let successMessage = `Your payment for order #${orderId} is successful and confirmed! Check your email or account for order details.`;
             showModal(successMessage, baseUrl);
           } else {
+            // console.log("Popup Response:", response);
             let failureMessage = `Your payment for order #${orderId} was declined with status: Failed! Click Ok.`;
             showModal(failureMessage, baseUrl);
           }
