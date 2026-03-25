@@ -179,6 +179,16 @@ jQuery(function ($) {
   async function handlePayment() {
     $("#wc-hydrogen-form").hide();
 
+    // Add close button click handler for Hydrogen modal
+    $(document)
+      .off("click", "#hydrogenPay_myModal .close")
+      .on("click", "#hydrogenPay_myModal .close", function () {
+        const modal = document.getElementById("hydrogenPay_myModal");
+        if (modal) {
+          modal.remove();
+        }
+      });
+
     $("form#payment-form, form#order_review")
       .find("input.hydrogen_txnref")
       .val("");
@@ -218,7 +228,7 @@ jQuery(function ($) {
         modalContent.style.marginTop = "-20px";
       }
 
-      const modalClose = document.querySelector("#hydrogenPay_modal .close");
+      const modalClose = document.querySelector("#hydrogenPay_myModal .close");
       if (modalClose) {
         modalClose.style.color = "white";
       }
@@ -236,7 +246,7 @@ jQuery(function ($) {
         modalContent.style.marginTop = "0px";
       }
 
-      const modalClose = document.querySelector("#hydrogenPay_modal .close");
+      const modalClose = document.querySelector("#hydrogenPay_myModal .close");
       if (modalClose) {
         modalClose.style.color = "white";
       }
@@ -286,11 +296,9 @@ jQuery(function ($) {
       } else {
         let orderId = wc_hydrogen_params.meta_order_id;
         let redirectUrl = wc_hydrogen_params.hydrogen_wc_redirect_url;
-        let baseUrl = window.location.href.replace(
-          /\/checkout\/order-pay\/\d+\/.*/,
-          ""
-        );
-        baseUrl += "/cart/";
+        let baseUrl =
+          wc_hydrogen_params.hydrogen_wc_redirect_url ||
+          window.location.origin + "/my-account/";
         transactionRef = transactionRef;
         confirmPayment(transactionRef);
       }
@@ -308,7 +316,7 @@ jQuery(function ($) {
               // Check the payment status by calling the handlePaymentStatus function
               const checkPaymentStatus = await handlePaymentStatus(
                 transactionRef,
-                window.token
+                window.token,
               );
               // console.log("Return checkPaymentStatus:", checkPaymentStatus);
 
@@ -414,14 +422,12 @@ jQuery(function ($) {
       setTimeout(function () {
         // Remove the spinner after delay (e.g., 2 seconds)
         $("#loading-spinner").remove();
-        let baseUrl = window.location.href.replace(
-          /\/checkout\/order-pay\/\d+\/.*/,
-          ""
-        );
-        baseUrl += "/cart/";
-        // Show a success message modal
-        let successMessage = `Your payment for order #${orderId} is successful and confirmed! Check your email or account for order details.`;
-        showModal(successMessage, baseUrl);
+        // Redirect directly to WooCommerce order success page
+        let successUrl =
+          wc_hydrogen_params.hydrogen_wc_return_url ||
+          wc_hydrogen_params.hydrogen_wc_redirect_url ||
+          window.location.origin + "/my-account/";
+        window.location.href = successUrl;
       }, 2000);
     }
 
@@ -484,19 +490,27 @@ jQuery(function ($) {
         //   },
 
         success: function (response) {
-          let baseUrl = window.location.href.replace(
-            /\/checkout\/order-pay\/\d+\/.*/,
-            ""
-          );
-          baseUrl += "/cart/";
-
           if (response.statusCode === "90000") {
-            let successMessage = `Your payment for order #${orderId} is successful and confirmed! Check your email or account for order details.`;
-            showModal(successMessage, baseUrl);
+            // redirect to WC order success page
+            let successUrl =
+              wc_hydrogen_params.hydrogen_wc_return_url ||
+              wc_hydrogen_params.hydrogen_wc_redirect_url ||
+              window.location.origin + "/my-account/";
+            window.location.href = successUrl;
           } else {
-            // console.log("Popup Response:", response);
-            let failureMessage = `Your payment for order #${orderId} was declined with status: Failed! Click Ok.`;
-            showModal(failureMessage, baseUrl);
+            // redirect to checkout page
+            let checkoutUrl =
+              wc_hydrogen_params.hydrogen_wc_checkout_url ||
+              window.location.href;
+            // WC error notice
+            let failureUrl =
+              checkoutUrl +
+              (checkoutUrl.includes("?") ? "&" : "?") +
+              "payment_error=1&error_message=" +
+              encodeURIComponent(
+                "Payment was declined. Please try again or use a different payment method.",
+              );
+            window.location.href = failureUrl;
           }
         },
         error: function (xhr, status, error) {
@@ -530,7 +544,7 @@ jQuery(function ($) {
             break;
         }
       },
-      false
+      false,
     );
   }
 

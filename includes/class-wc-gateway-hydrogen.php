@@ -259,6 +259,9 @@ class WC_Gateway_Hydrogen extends WC_Payment_Gateway_CC
 
 		add_action('woocommerce_receipt_' . $this->id, array($this, 'receipt_page'));
 
+		// Handle payment error messages from JavaScript redirect
+		add_action('wp', array($this, 'handle_payment_error_message'));
+
 		// Webhook listener/API hook.
 		add_action('woocommerce_api_tbz_wc_hydrogen_webhook', array($this, 'process_webhooks'));
 
@@ -634,8 +637,8 @@ class WC_Gateway_Hydrogen extends WC_Payment_Gateway_CC
 		}
 
 		$script_src = $this->testmode ?
-			'https://hydrogenshared.blob.core.windows.net/paymentgateway/paymentGatewayIntegration_v1PROD.js' :
-			'https://hydrogenshared.blob.core.windows.net/paymentgateway/paymentGatewayIntegration_v1PROD.js';
+			'https://js.hydrogenpay.com/inline.js' :
+			'https://js.hydrogenpay.com/inline.js';
 
 		$secret_key = $this->testmode ? $this->test_secret_key : $this->live_secret_key;
 
@@ -675,8 +678,16 @@ class WC_Gateway_Hydrogen extends WC_Payment_Gateway_CC
 				// Get the "My Account" URL
 				$hydrogen_wc_redirect_url = wc_get_page_permalink('myaccount');
 
-				// Pass the "My Account" URL to your JavaScript
+				// Get the proper WooCommerce order success/thank you page URL
+				$hydrogen_wc_return_url = $this->get_return_url($order);
+
+				// Get the checkout payment URL for failures
+				$hydrogen_wc_checkout_url = $order->get_checkout_payment_url(true);
+
+				// Pass the URLs to your JavaScript
 				$hydrogen_params['hydrogen_wc_redirect_url'] = $hydrogen_wc_redirect_url;
+				$hydrogen_params['hydrogen_wc_return_url'] = $hydrogen_wc_return_url;
+				$hydrogen_params['hydrogen_wc_checkout_url'] = $hydrogen_wc_checkout_url;
 			}
 
 			if ($this->split_payment) {
@@ -782,6 +793,17 @@ class WC_Gateway_Hydrogen extends WC_Payment_Gateway_CC
 		wp_enqueue_script('wc_hydrogen_admin', plugins_url('assets/js/hydrogen-admin' . $suffix . '.js', WC_HYDROGEN_MAIN_FILE), array(), WC_HYDROGEN_VERSION, true);
 
 		wp_localize_script('wc_hydrogen_admin', 'wc_hydrogen_admin_params', $hydrogen_admin_params);
+	}
+
+	/**
+	 * Handle payment error messages from JavaScript redirect
+	 */
+	public function handle_payment_error_message()
+	{
+		if (is_checkout_pay_page() && isset($_GET['payment_error']) && isset($_GET['error_message'])) {
+			$error_message = sanitize_text_field(wp_unslash($_GET['error_message']));
+			wc_add_notice($error_message, 'error');
+		}
 	}
 
 	/**
