@@ -179,7 +179,7 @@ jQuery(function ($) {
   async function handlePayment() {
     $("#wc-hydrogen-form").hide();
 
-    // Add close button click handler for Hydrogen modal
+    // close handler
     $(document)
       .off("click", "#hydrogenPay_myModal .close")
       .on("click", "#hydrogenPay_myModal .close", function () {
@@ -187,6 +187,11 @@ jQuery(function ($) {
         if (modal) {
           modal.remove();
         }
+        // Redirect to cart page when user cancels payment
+        let cartUrl =
+          wc_hydrogen_params.hydrogen_wc_redirect_url ||
+          window.location.origin + "/cart/";
+        window.location.href = cartUrl;
       });
 
     $("form#payment-form, form#order_review")
@@ -502,7 +507,7 @@ jQuery(function ($) {
             let checkoutUrl =
               wc_hydrogen_params.hydrogen_wc_checkout_url ||
               window.location.href;
-            // WC error notice
+            // Add error parameter and preserve nonce for security
             let failureUrl =
               checkoutUrl +
               (checkoutUrl.includes("?") ? "&" : "?") +
@@ -510,6 +515,13 @@ jQuery(function ($) {
               encodeURIComponent(
                 "Payment was declined. Please try again or use a different payment method.",
               );
+
+            // Ensure nonce is included if not already present
+            if (wc_hydrogen_params.nonce && !failureUrl.includes("nonce=")) {
+              failureUrl +=
+                "&nonce=" + encodeURIComponent(wc_hydrogen_params.nonce);
+            }
+
             window.location.href = failureUrl;
           }
         },
