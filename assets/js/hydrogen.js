@@ -179,19 +179,30 @@ jQuery(function ($) {
   async function handlePayment() {
     $("#wc-hydrogen-form").hide();
 
-    // close handler
+    // Add close button click handler for Hydrogen modal
     $(document)
       .off("click", "#hydrogenPay_myModal .close")
-      .on("click", "#hydrogenPay_myModal .close", function () {
+      .on("click", "#hydrogenPay_myModal .close", function (e) {
+        // Prevent any default behavior and stop event propagation
+        e.preventDefault();
+        e.stopPropagation();
+
         const modal = document.getElementById("hydrogenPay_myModal");
         if (modal) {
           modal.remove();
         }
-        // Redirect to cart page when user cancels payment
+
+        // Remove any existing spinners
+        $("#loading-spinner").remove();
+
+        // Redirect to cart page when user cancels payment (no loader needed)
         let cartUrl =
           wc_hydrogen_params.hydrogen_wc_redirect_url ||
           window.location.origin + "/cart/";
         window.location.href = cartUrl;
+
+        // Return false to prevent any further processing
+        return false;
       });
 
     $("form#payment-form, form#order_review")
@@ -394,7 +405,7 @@ jQuery(function ($) {
           left: 0;
           width: 100%;
           height: 100%;
-          background: rgba(255, 255, 255, 0.8);
+          background: transparent;
           display: flex;
           justify-content: center;
           align-items: center;
@@ -446,7 +457,7 @@ jQuery(function ($) {
               left: 0;
               width: 100%;
               height: 100%;
-              background: rgba(255, 255, 255, 0.8);
+              background: transparent;
               display: flex;
               justify-content: center;
               align-items: center;
@@ -496,14 +507,14 @@ jQuery(function ($) {
 
         success: function (response) {
           if (response.statusCode === "90000") {
-            // redirect to WC order success page
+            // Successful payment - redirect directly to WooCommerce order success page
             let successUrl =
               wc_hydrogen_params.hydrogen_wc_return_url ||
               wc_hydrogen_params.hydrogen_wc_redirect_url ||
               window.location.origin + "/my-account/";
             window.location.href = successUrl;
           } else {
-            // redirect to checkout page
+            // Failed payment - redirect back to checkout payment page (standard WooCommerce practice)
             let checkoutUrl =
               wc_hydrogen_params.hydrogen_wc_checkout_url ||
               window.location.href;
