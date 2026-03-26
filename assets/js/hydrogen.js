@@ -310,11 +310,6 @@ jQuery(function ($) {
         var response = { event: "callback", transactionRef: transactionRef };
         window.parent.postMessage(JSON.stringify(response), "*");
       } else {
-        let orderId = wc_hydrogen_params.meta_order_id;
-        let redirectUrl = wc_hydrogen_params.hydrogen_wc_redirect_url;
-        let baseUrl =
-          wc_hydrogen_params.hydrogen_wc_redirect_url ||
-          window.location.origin + "/my-account/";
         transactionRef = transactionRef;
         confirmPayment(transactionRef);
       }
@@ -549,18 +544,37 @@ jQuery(function ($) {
     window.addEventListener(
       "message",
       function (event) {
-        var messageResponse = JSON.parse(event.data);
+        // Parse JSON with try/catch
+        let messageResponse;
+        try {
+          messageResponse = JSON.parse(event.data);
+        } catch (error) {
+          console.warn("Invalid JSON in postMessage:", error);
+          return;
+        }
+
+        if (!messageResponse || typeof messageResponse.event !== "string") {
+          console.warn("Invalid message structure:", messageResponse);
+          return;
+        }
+
         switch (messageResponse.event) {
           case "callback":
-            callbackURL(messageResponse.transactionRef);
+            if (messageResponse.transactionRef) {
+              callbackURL(messageResponse.transactionRef);
+            }
             break;
 
           case "success":
-            onSuccess(messageResponse.transactionRef);
+            if (messageResponse.transactionRef) {
+              onSuccess(messageResponse.transactionRef);
+            }
             break;
 
           case "close":
-            confirmPayment(messageResponse.transactionRef);
+            if (messageResponse.transactionRef) {
+              confirmPayment(messageResponse.transactionRef);
+            }
             break;
           default:
             console.log("Unknown event:", messageResponse);

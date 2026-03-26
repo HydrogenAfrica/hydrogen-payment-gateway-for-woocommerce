@@ -636,9 +636,7 @@ class WC_Gateway_Hydrogen extends WC_Payment_Gateway_CC
 			return;
 		}
 
-		$script_src = $this->testmode ?
-			'https://js.hydrogenpay.com/inline.js' :
-			'https://js.hydrogenpay.com/inline.js';
+		$script_src = 'https://js.hydrogenpay.com/inline.js';
 
 		$secret_key = $this->testmode ? $this->test_secret_key : $this->live_secret_key;
 
