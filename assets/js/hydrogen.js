@@ -179,6 +179,32 @@ jQuery(function ($) {
   async function handlePayment() {
     $("#wc-hydrogen-form").hide();
 
+    // Add close button click handler for Hydrogen modal
+    $(document)
+      .off("click", "#hydrogenPay_myModal .close")
+      .on("click", "#hydrogenPay_myModal .close", function (e) {
+        // Prevent any default behavior and stop event propagation
+        e.preventDefault();
+        e.stopPropagation();
+
+        const modal = document.getElementById("hydrogenPay_myModal");
+        if (modal) {
+          modal.remove();
+        }
+
+        // Remove any existing spinners
+        $("#loading-spinner").remove();
+
+        // Redirect to cart page when user cancels payment (no loader needed)
+        let cartUrl =
+          wc_hydrogen_params.hydrogen_wc_redirect_url ||
+          window.location.origin + "/cart/";
+        window.location.href = cartUrl;
+
+        // Return false to prevent any further processing
+        return false;
+      });
+
     $("form#payment-form, form#order_review")
       .find("input.hydrogen_txnref")
       .val("");
@@ -218,7 +244,7 @@ jQuery(function ($) {
         modalContent.style.marginTop = "-20px";
       }
 
-      const modalClose = document.querySelector("#hydrogenPay_modal .close");
+      const modalClose = document.querySelector("#hydrogenPay_myModal .close");
       if (modalClose) {
         modalClose.style.color = "white";
       }
@@ -236,7 +262,7 @@ jQuery(function ($) {
         modalContent.style.marginTop = "0px";
       }
 
-      const modalClose = document.querySelector("#hydrogenPay_modal .close");
+      const modalClose = document.querySelector("#hydrogenPay_myModal .close");
       if (modalClose) {
         modalClose.style.color = "white";
       }
@@ -284,13 +310,6 @@ jQuery(function ($) {
         var response = { event: "callback", transactionRef: transactionRef };
         window.parent.postMessage(JSON.stringify(response), "*");
       } else {
-        let orderId = wc_hydrogen_params.meta_order_id;
-        let redirectUrl = wc_hydrogen_params.hydrogen_wc_redirect_url;
-        let baseUrl = window.location.href.replace(
-          /\/checkout\/order-pay\/\d+\/.*/,
-          ""
-        );
-        baseUrl += "/cart/";
         transactionRef = transactionRef;
         confirmPayment(transactionRef);
       }
@@ -308,7 +327,7 @@ jQuery(function ($) {
               // Check the payment status by calling the handlePaymentStatus function
               const checkPaymentStatus = await handlePaymentStatus(
                 transactionRef,
-                window.token
+                window.token,
               );
               // console.log("Return checkPaymentStatus:", checkPaymentStatus);
 
@@ -381,7 +400,7 @@ jQuery(function ($) {
           left: 0;
           width: 100%;
           height: 100%;
-          background: rgba(255, 255, 255, 0.8);
+          background: transparent;
           display: flex;
           justify-content: center;
           align-items: center;
@@ -414,14 +433,12 @@ jQuery(function ($) {
       setTimeout(function () {
         // Remove the spinner after delay (e.g., 2 seconds)
         $("#loading-spinner").remove();
-        let baseUrl = window.location.href.replace(
-          /\/checkout\/order-pay\/\d+\/.*/,
-          ""
-        );
-        baseUrl += "/cart/";
-        // Show a success message modal
-        let successMessage = `Your payment for order #${orderId} is successful and confirmed! Check your email or account for order details.`;
-        showModal(successMessage, baseUrl);
+        // Redirect directly to WooCommerce order success page
+        let successUrl =
+          wc_hydrogen_params.hydrogen_wc_return_url ||
+          wc_hydrogen_params.hydrogen_wc_redirect_url ||
+          window.location.origin + "/my-account/";
+        window.location.href = successUrl;
       }, 2000);
     }
 
@@ -435,7 +452,7 @@ jQuery(function ($) {
               left: 0;
               width: 100%;
               height: 100%;
-              background: rgba(255, 255, 255, 0.8);
+              background: transparent;
               display: flex;
               justify-content: center;
               align-items: center;
@@ -484,19 +501,34 @@ jQuery(function ($) {
         //   },
 
         success: function (response) {
-          let baseUrl = window.location.href.replace(
-            /\/checkout\/order-pay\/\d+\/.*/,
-            ""
-          );
-          baseUrl += "/cart/";
-
           if (response.statusCode === "90000") {
-            let successMessage = `Your payment for order #${orderId} is successful and confirmed! Check your email or account for order details.`;
-            showModal(successMessage, baseUrl);
+            // Successful payment - redirect directly to WooCommerce order success page
+            let successUrl =
+              wc_hydrogen_params.hydrogen_wc_return_url ||
+              wc_hydrogen_params.hydrogen_wc_redirect_url ||
+              window.location.origin + "/my-account/";
+            window.location.href = successUrl;
           } else {
-            // console.log("Popup Response:", response);
-            let failureMessage = `Your payment for order #${orderId} was declined with status: Failed! Click Ok.`;
-            showModal(failureMessage, baseUrl);
+            // Failed payment - redirect back to checkout payment page (standard WooCommerce practice)
+            let checkoutUrl =
+              wc_hydrogen_params.hydrogen_wc_checkout_url ||
+              window.location.href;
+            // Add error parameter and preserve nonce for security
+            let failureUrl =
+              checkoutUrl +
+              (checkoutUrl.includes("?") ? "&" : "?") +
+              "payment_error=1&error_message=" +
+              encodeURIComponent(
+                "Payment was declined. Please try again or use a different payment method.",
+              );
+
+            // Ensure nonce is included if not already present
+            if (wc_hydrogen_params.nonce && !failureUrl.includes("nonce=")) {
+              failureUrl +=
+                "&nonce=" + encodeURIComponent(wc_hydrogen_params.nonce);
+            }
+
+            window.location.href = failureUrl;
           }
         },
         error: function (xhr, status, error) {
@@ -512,25 +544,44 @@ jQuery(function ($) {
     window.addEventListener(
       "message",
       function (event) {
-        var messageResponse = JSON.parse(event.data);
+        // Parse JSON with try/catch
+        let messageResponse;
+        try {
+          messageResponse = JSON.parse(event.data);
+        } catch (error) {
+          console.warn("Invalid JSON in postMessage:", error);
+          return;
+        }
+
+        if (!messageResponse || typeof messageResponse.event !== "string") {
+          console.warn("Invalid message structure:", messageResponse);
+          return;
+        }
+
         switch (messageResponse.event) {
           case "callback":
-            callbackURL(messageResponse.transactionRef);
+            if (messageResponse.transactionRef) {
+              callbackURL(messageResponse.transactionRef);
+            }
             break;
 
           case "success":
-            onSuccess(messageResponse.transactionRef);
+            if (messageResponse.transactionRef) {
+              onSuccess(messageResponse.transactionRef);
+            }
             break;
 
           case "close":
-            confirmPayment(messageResponse.transactionRef);
+            if (messageResponse.transactionRef) {
+              confirmPayment(messageResponse.transactionRef);
+            }
             break;
           default:
             console.log("Unknown event:", messageResponse);
             break;
         }
       },
-      false
+      false,
     );
   }
 
