@@ -104,9 +104,6 @@ we welcome your contributions to enhance the code.
 = 1.1.0 - July 2026 =
 * Fix: Fatal error `array_merge(): Argument #2 must be of type array, null given` when using WooCommerce Blocks / Store API checkout
 * Fix: Nonce verification now correctly allows WooCommerce Blocks checkout (which does not POST a nonce) to proceed
-* Fix: Payment payload bug in redirect mode — channels, split payment config, and metadata were built into an unused variable and never sent to the Hydrogen API
-* Fix: Successful payment now redirects to the WooCommerce Order Thank You page instead of the cart page
-* Fix: Cancelled/closed payment modal now redirects back to the checkout pay page so customers can retry
 * Add: Declared compatibility with WooCommerce Checkout Blocks (`cart_checkout_blocks`)
 * Add: Declared compatibility with WooCommerce HPOS (`custom_order_tables`)
 * Update: WC tested up to 10.9.4
