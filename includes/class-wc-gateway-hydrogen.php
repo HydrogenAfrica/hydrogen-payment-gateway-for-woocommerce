@@ -900,7 +900,6 @@ class WC_Gateway_Hydrogen extends WC_Payment_Gateway_CC
 	{
 
 		$order  = wc_get_order($order_id);
-		$amount = (int) round($order->get_total() * 100); // convert to kobo/cents as required by Hydrogen REST API
 		$txnref = $order_id . '_' . time();
 
 		$nonce = wp_create_nonce('wc_hydrogen_payment_nonce');
@@ -917,9 +916,9 @@ class WC_Gateway_Hydrogen extends WC_Payment_Gateway_CC
 
 		$payment_channels = $this->get_gateway_payment_channels($order);
 
-		// Build the payload sent to the API
+		// payload
 		$hydrogen_payload = array(
-			'amount'       => $amount,
+			'amount'       => $order->get_total(),
 			'email'        => $order->get_billing_email(),
 			'currency'     => $order->get_currency(),
 			'description'  => 'Payment for items ordered with ID ' . $order->get_id(),
@@ -937,30 +936,10 @@ class WC_Gateway_Hydrogen extends WC_Payment_Gateway_CC
 			$hydrogen_payload['subaccount'] = $this->subaccount_code;
 			$hydrogen_payload['bearer']     = $this->charges_account;
 
-			if (empty($this->transaction_charges)) {
-				$hydrogen_payload['transaction_charge'] = '';
-			} else {
+			if (!empty($this->transaction_charges)) {
 				$hydrogen_payload['transaction_charge'] = $this->transaction_charges * 100;
 			}
 		}
-
-		// metadata must be an array of objects (List), not a plain object
-		$metadata = array();
-		$custom_fields = $this->get_custom_fields($order_id);
-		if (!empty($custom_fields)) {
-			foreach ($custom_fields as $field) {
-				$metadata[] = $field;
-			}
-		}
-		$metadata[] = array(
-			'display_name'  => 'cancel_action',
-			'variable_name' => 'cancel_action',
-			'value'         => wc_get_cart_url(),
-		);
-		$hydrogen_payload['metadata'] = $metadata;
-
-		// Wrap in 'request' key as required by Hydrogen API
-		$api_body = array('request' => $hydrogen_payload);
 
 		$order->update_meta_data('_hydrogen_txn_ref', $txnref);
 		$order->save();
@@ -974,7 +953,7 @@ class WC_Gateway_Hydrogen extends WC_Payment_Gateway_CC
 		$args = array(
 			'headers' => $headers,
 			'timeout' => 60,
-			'body'    => wp_json_encode($api_body),
+			'body'    => wp_json_encode($hydrogen_payload),
 		);
 
 		$request = wp_remote_post($hydrogen_url, $args);
