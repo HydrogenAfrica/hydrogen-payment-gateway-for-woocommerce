@@ -195,11 +195,10 @@ jQuery(function ($) {
         // Remove any existing spinners
         $("#loading-spinner").remove();
 
-        // Redirect to cart page when user cancels payment (no loader needed)
-        let cartUrl =
-          wc_hydrogen_params.hydrogen_wc_redirect_url ||
-          window.location.origin + "/cart/";
-        window.location.href = cartUrl;
+        // Redirect back to checkout pay page so customer can try again
+        let cancelUrl =
+          wc_hydrogen_params.hydrogen_wc_checkout_url || window.location.href;
+        window.location.href = cancelUrl;
 
         // Return false to prevent any further processing
         return false;

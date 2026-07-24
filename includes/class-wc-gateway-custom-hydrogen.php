@@ -418,11 +418,11 @@ class WC_Gateway_Custom_Hydrogen extends WC_Gateway_Hydrogen_Subscriptions
 			return;
 		}
 
-		// Verify the nonce before processing further
-		if (!isset($_GET['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_GET['nonce'])), 'wc_hydrogen_payment_nonce')) {
+		// Verify the nonce if present (nonce is added to URL after process_payment for inline/popup flow)
+		if (isset($_GET['nonce']) && !wp_verify_nonce(sanitize_text_field(wp_unslash($_GET['nonce'])), 'wc_hydrogen_payment_nonce')) {
 			wp_die(
-				esc_html__('Invalid request. Nonce verification failed.', 'text-domain'),
-				esc_html__('Error', 'text-domain'),
+				esc_html__('Invalid request. Nonce verification failed.', 'woo-hydrogen'),
+				esc_html__('Error', 'woo-hydrogen'),
 				array('response' => 403)
 			);
 		}

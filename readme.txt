@@ -3,8 +3,9 @@ Contributors: Hydrogenpay
 Donate link: https://hydrogenpay.com
 Tags: hydrogen, hydrogenpay, woocommerce, payment gateway, payments
 Requires at least: 3.0.0
-Tested up to: 8.2.5
-Stable tag: 1.0.0
+Tested up to: 10.9.4
+Requires PHP: 7.4
+Stable tag: 1.1.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -51,7 +52,8 @@ Hydrogen Payment Gateway enables fast, secure payments through card transactions
 
 3.	Latest releases
 
-    1. 1.0.0 - September 26, 2024.
+    1. 1.1.0 - July 2026.
+    2. 1.0.0 - September 26, 2024.
 
 
 4.	API references
@@ -96,3 +98,19 @@ we welcome your contributions to enhance the code.
 
 3. Hydrogen Popup/inline payment page
 
+
+== Changelog ==
+
+= 1.1.0 - July 2026 =
+* Fix: Fatal error `array_merge(): Argument #2 must be of type array, null given` when using WooCommerce Blocks / Store API checkout
+* Fix: Nonce verification now correctly allows WooCommerce Blocks checkout (which does not POST a nonce) to proceed
+* Fix: Payment payload bug in redirect mode — channels, split payment config, and metadata were built into an unused variable and never sent to the Hydrogen API
+* Fix: Successful payment now redirects to the WooCommerce Order Thank You page instead of the cart page
+* Fix: Cancelled/closed payment modal now redirects back to the checkout pay page so customers can retry
+* Add: Declared compatibility with WooCommerce Checkout Blocks (`cart_checkout_blocks`)
+* Add: Declared compatibility with WooCommerce HPOS (`custom_order_tables`)
+* Update: WC tested up to 10.9.4
+* Update: WordPress tested up to 7.0.1
+
+= 1.0.0 - September 26, 2024 =
+* Initial release
