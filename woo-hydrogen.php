@@ -4,12 +4,12 @@
  * Plugin Name: Hydrogen Payment Gateway for WooCommerce
  * Plugin URI: https://hydrogenpay.com
  * Description: Hydrogen Payment Gateway for WooCommerce helps you process payments using cards and account transfers for faster delivery of goods and services.
- * Version: 1.0.0
+ * Version: 1.1.0
  * Author: Hydrogen
  * License: GPL-2.0+
  * License URI: http://www.gnu.org/licenses/gpl-2.0.txt
- * WC requires at least: 3.0.0
- * WC tested up to: 8.2.5
+ * WC requires at least: 5.0.0
+ * WC tested up to: 10.9.4
  * Text Domain: hydrogen-payment-gateway-for-woocommerce
  * Domain Path: /languages
  */
@@ -24,7 +24,7 @@ if (!defined('ABSPATH')) {
 define('WC_HYDROGEN_MAIN_FILE', __FILE__);
 define('WC_HYDROGEN_URL', untrailingslashit(plugins_url('/', __FILE__)));
 
-define('WC_HYDROGEN_VERSION', '1.0.0');
+define('WC_HYDROGEN_VERSION', '1.1.0');
 
 /**
  * Initialize Hydrogen payment gateway for wooCommerce.
@@ -136,7 +136,7 @@ function tbz_wc_add_hydrogen_gateway($methods)
 
 function tbz_wc_hydrogen_wc_missing_notice()
 {
-	
+
 	echo '<div class="error"><p><strong>' . wp_kses(
 		sprintf(
 			// Translators: %s is a link to install WooCommerce
@@ -203,6 +203,7 @@ add_action(
 	function () {
 		if (class_exists(\Automattic\WooCommerce\Utilities\FeaturesUtil::class)) {
 			\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility('custom_order_tables', __FILE__, true);
+			\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility('cart_checkout_blocks', __FILE__, true);
 		}
 	}
 );
