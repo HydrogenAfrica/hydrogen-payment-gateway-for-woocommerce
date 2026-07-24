@@ -587,13 +587,6 @@ class WC_Gateway_Hydrogen extends WC_Payment_Gateway_CC
 			echo wp_kses_post(wpautop(wptexturize($this->description)));
 		}
 
-		if (!is_ssl()) {
-			return;
-		}
-
-		// Add nonce field for security
-		wp_nonce_field('wc_hydrogen_payment_nonce_action', 'wc_hydrogen_payment_nonce');
-
 		if ($this->supports('tokenization') && is_checkout() && $this->saved_cards && is_user_logged_in()) {
 			$this->tokenization_script();
 			$this->saved_payment_methods();
@@ -653,8 +646,8 @@ class WC_Gateway_Hydrogen extends WC_Payment_Gateway_CC
 
 
 		$hydrogen_params = array(
-			'key' => $secret_key,
-			'nonce' => wp_create_nonce('wc_hydrogen_payment_nonce'), // Generate and pass nonce
+			'key'   => $secret_key,
+			'nonce' => wp_create_nonce('wc_hydrogen_payment_nonce_action'), // must match verify endpoints
 		);
 
 		if (is_checkout_pay_page() && get_query_var('order-pay')) {
@@ -814,17 +807,6 @@ class WC_Gateway_Hydrogen extends WC_Payment_Gateway_CC
 	public function process_payment($order_id)
 	{
 
-		// Verify nonce before processing (only for classic checkout; blocks checkout does not send this nonce)
-		if (
-			isset($_POST['wc_hydrogen_payment_nonce']) &&
-			!wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['wc_hydrogen_payment_nonce'])), 'wc_hydrogen_payment_nonce_action')
-		) {
-			wc_add_notice(__('Security check failed, please try again.', 'woocommerce'), 'error');
-			return array(
-				'result' => 'failure',
-			);
-		}
-
 		if ('redirect' === $this->payment_page) {
 
 			// For the 'redirect' payment method, initiate the redirect payment option
@@ -917,19 +899,7 @@ class WC_Gateway_Hydrogen extends WC_Payment_Gateway_CC
 	public function process_redirect_payment_option($order_id)
 	{
 
-		// Verify nonce before processing (only for classic checkout; blocks checkout does not send this nonce)
-		if (
-			isset($_POST['wc_hydrogen_payment_nonce']) &&
-			!wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['wc_hydrogen_payment_nonce'])), 'wc_hydrogen_payment_nonce_action')
-		) {
-			wc_add_notice(__('Security check failed, please try again.', 'woocommerce'), 'error');
-			return array(
-				'result' => 'failure',
-			);
-		}
-
 		$order  = wc_get_order($order_id);
-		$amount = $order->get_total();
 		$txnref = $order_id . '_' . time();
 
 		$nonce = wp_create_nonce('wc_hydrogen_payment_nonce');
@@ -946,9 +916,9 @@ class WC_Gateway_Hydrogen extends WC_Payment_Gateway_CC
 
 		$payment_channels = $this->get_gateway_payment_channels($order);
 
-		// Build the payload sent to the API (was previously $hydrogen_params1 missing extra fields)
+		// payload
 		$hydrogen_payload = array(
-			'amount'       => $amount,
+			'amount'       => $order->get_total(),
 			'email'        => $order->get_billing_email(),
 			'currency'     => $order->get_currency(),
 			'description'  => 'Payment for items ordered with ID ' . $order->get_id(),
@@ -966,18 +936,10 @@ class WC_Gateway_Hydrogen extends WC_Payment_Gateway_CC
 			$hydrogen_payload['subaccount'] = $this->subaccount_code;
 			$hydrogen_payload['bearer']     = $this->charges_account;
 
-			if (empty($this->transaction_charges)) {
-				$hydrogen_payload['transaction_charge'] = '';
-			} else {
+			if (!empty($this->transaction_charges)) {
 				$hydrogen_payload['transaction_charge'] = $this->transaction_charges * 100;
 			}
 		}
-
-		$custom_fields = $this->get_custom_fields($order_id);
-		if (!empty($custom_fields)) {
-			$hydrogen_payload['metadata']['custom_fields'] = $custom_fields;
-		}
-		$hydrogen_payload['metadata']['cancel_action'] = wc_get_cart_url();
 
 		$order->update_meta_data('_hydrogen_txn_ref', $txnref);
 		$order->save();
@@ -1012,6 +974,16 @@ class WC_Gateway_Hydrogen extends WC_Payment_Gateway_CC
 				'redirect' => $response_body->data->url,
 			);
 		} else {
+			// Log the actual API response for debugging
+			$raw_body = wp_remote_retrieve_body($request);
+			wc_get_logger()->error(
+				sprintf(
+					'HydrogenPay redirect initiation failed. HTTP %d. Body: %s',
+					$response_code,
+					$raw_body
+				),
+				array('source' => 'hydrogen-payment-gateway')
+			);
 			wc_add_notice(__('Unable to process payment, please try again.', 'woo-hydrogen'), 'error');
 			return array(
 				'result' => 'failure',
@@ -1324,7 +1296,7 @@ class WC_Gateway_Hydrogen extends WC_Payment_Gateway_CC
 		// Verify nonce before processing
 		if (
 			!isset($_POST['wc_hydrogen_payment_nonce']) ||
-			!wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['wc_hydrogen_payment_nonce'])), 'wc_hydrogen_payment_nonce')
+			!wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['wc_hydrogen_payment_nonce'])), 'wc_hydrogen_payment_nonce_action')
 		) {
 			wc_add_notice(__('Security check failed, please try again.', 'woocommerce'), 'error');
 			return;
