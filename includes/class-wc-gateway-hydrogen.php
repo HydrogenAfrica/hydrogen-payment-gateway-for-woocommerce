@@ -900,7 +900,7 @@ class WC_Gateway_Hydrogen extends WC_Payment_Gateway_CC
 	{
 
 		$order  = wc_get_order($order_id);
-		$amount = $order->get_total();
+		$amount = (int) round($order->get_total() * 100); // convert to kobo/cents as required by Hydrogen REST API
 		$txnref = $order_id . '_' . time();
 
 		$nonce = wp_create_nonce('wc_hydrogen_payment_nonce');
